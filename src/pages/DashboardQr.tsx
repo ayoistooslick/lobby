@@ -66,7 +66,7 @@ export default function DashboardQr() {
 
   return (
     <>
-      <h1 className="page-title">{t("dash.navQr")}</h1>
+      
       <p className="section-copy qr-intro">{t("qr.intro")}</p>
 
       <div className="qr-layout">

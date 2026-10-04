@@ -33,6 +33,27 @@ function clearId(slug: string): void {
   }
 }
 
+function LeaveIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9 12h11m0 0-3.5-3.5M20 12l-3.5 3.5M9 12l3.5 3.5M9 12 5.5 8.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export default function CustomerQueue() {
   const { slug = "" } = useParams();
   const { t } = useI18n();
@@ -222,52 +243,57 @@ export default function CustomerQueue() {
       )}
 
       {ticket && ticket.status === "waiting" && (
-        <section
-          className={`ticket-panel${ticket.peopleAhead === 0 ? " is-next" : ""}`}
-          aria-live="polite"
-        >
-          <p className="eyebrow">{t("cust.youreNumber")}</p>
-          <p className="ticket-number">{ticket.number}</p>
-          <p className="ticket-ahead">
-            {ticket.peopleAhead === 0
-              ? t("cust.youreNext")
-              : ticket.peopleAhead === 1
-                ? t("cust.oneAhead")
-                : t("cust.nAhead", { n: ticket.peopleAhead })}
-          </p>
-          <div className="ticket-split">
-            <div>
-              <p className="eyebrow">{t("demo.nowServing")}</p>
-              <p className="split-number">{nowServing !== null ? `#${nowServing}` : "·"}</p>
-            </div>
-            <div>
-              <p className="eyebrow">{t("cust.peopleWaiting")}</p>
-              <p className="split-number">{waitingCount}</p>
-            </div>
+        <section className="cust-stack" aria-live="polite">
+          <div className={`ticket-hero${ticket.peopleAhead === 0 ? " is-next" : ""}`}>
+            <p className="ticket-number">#{ticket.number}</p>
+            <p className="ticket-ahead">
+              {ticket.peopleAhead === 0
+                ? t("cust.youreNext")
+                : ticket.peopleAhead === 1
+                  ? t("cust.oneAhead")
+                  : t("cust.nAhead", { n: ticket.peopleAhead })}
+            </p>
           </div>
-          <p className="reassure">{t("cust.reassure")}</p>
+
+          <div className="stat-card">
+            <p className="stat-label">{t("demo.nowServing")}</p>
+            <p className="stat-value">
+              {nowServing !== null ? `#${nowServing}` : <span className="dash-mark is-sm" />}
+            </p>
+          </div>
+
+          <div className="stat-card">
+            <p className="stat-label">{t("cust.peopleWaiting")}</p>
+            <p className="stat-value">{waitingCount}</p>
+          </div>
+
+          <p className="reassure">
+            <span className="reassure-dot" aria-hidden="true" />
+            <span>{t("cust.reassure")}</span>
+          </p>
+
           {actionError && (
             <p className="form-error" role="alert">
               {actionError}
             </p>
           )}
-          <div className="ticket-foot">
-            <button
-              type="button"
-              className="link-button"
-              onClick={() => void leaveQueue()}
-              disabled={busy}
-            >
-              {t("cust.leave")}
-            </button>
-          </div>
+
+          <button
+            type="button"
+            className="btn btn-secondary leave-btn btn-block"
+            onClick={() => void leaveQueue()}
+            disabled={busy}
+          >
+            <LeaveIcon />
+            <span>{t("cust.leave")}</span>
+          </button>
         </section>
       )}
 
       {ticket && ticket.status === "called" && (
         <section className="ticket-panel is-turn" aria-live="assertive">
           <p className="eyebrow">{t("cust.turnT")}</p>
-          <p className="ticket-number">{ticket.number}</p>
+          <p className="ticket-number">#{ticket.number}</p>
           <p className="ticket-ahead">{t("cust.turnB")}</p>
           {!ticket.confirmed ? (
             <>
@@ -298,7 +324,7 @@ export default function CustomerQueue() {
           <p className="eyebrow">
             {ticket.status === "served" ? t("cust.done") : ticket.status === "skipped" ? t("dash.stSkipped") : t("dash.stNoShow")}
           </p>
-          <p className="ticket-number">{ticket.number}</p>
+          <p className="ticket-number">#{ticket.number}</p>
           <p className="ticket-ahead">
             {ticket.status === "served"
               ? t("cust.servedBody")

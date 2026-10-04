@@ -50,7 +50,7 @@ export default function DashboardSettings() {
 
   return (
     <>
-      <h1 className="page-title">{t("dash.navSettings")}</h1>
+      
 
       <form className="settings-form" onSubmit={(event) => void save(event)}>
         <div className="field">

@@ -4,27 +4,39 @@
 :root {
   --font: "Google Sans", "Product Sans", "Roboto", system-ui, -apple-system, "Segoe UI", Arial,
     sans-serif;
-  --bg: #ffffff;
-  --bg-soft: #f6f6f6;
-  --fg: #101010;
-  --fg-muted: #5c5c5c;
-  --line: #e3e3e3;
-  --line-strong: #101010;
-  --btn-bg: #101010;
+  --bg: #f4f4f5;
+  --bg-soft: #ececee;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --raised: #f4f4f5;
+  --fg: #0b0b0c;
+  --fg-muted: #71717a;
+  --line: #e6e6e9;
+  --line-strong: #c9c9d1;
+  --card-line: #e6e6e9;
+  --btn-bg: #0b0b0c;
   --btn-fg: #ffffff;
-  --radius: 6px;
-  --shell: 1040px;
+  --danger: #d92d20;
+  --radius: 22px;
+  --radius-sm: 14px;
+  --shell: 880px;
+  --app: 720px;
 }
 
 [data-theme="dark"] {
-  --bg: #0c0c0c;
-  --bg-soft: #171717;
-  --fg: #f2f2f2;
-  --fg-muted: #a5a5a5;
-  --line: #2b2b2b;
-  --line-strong: #f2f2f2;
-  --btn-bg: #f2f2f2;
-  --btn-fg: #0c0c0c;
+  --bg: #000000;
+  --bg-soft: #111113;
+  --surface: #0b0b0c;
+  --card: #0b0b0c;
+  --raised: #17171a;
+  --fg: #ffffff;
+  --fg-muted: #8b8b93;
+  --line: #232327;
+  --line-strong: #3a3a40;
+  --card-line: #26262a;
+  --btn-bg: #ffffff;
+  --btn-fg: #000000;
+  --danger: #ff6b60;
 }
 
 /* ---------------------------------------------------------------
@@ -73,7 +85,7 @@ h1 {
 }
 
 h2 {
-  font-size: clamp(1.3rem, 3vw, 1.55rem);
+  font-size: clamp(1.25rem, 3vw, 1.45rem);
   font-weight: 500;
 }
 
@@ -111,7 +123,8 @@ textarea {
 
 :focus-visible {
   outline: 2px solid var(--fg);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 .muted {
@@ -119,22 +132,37 @@ textarea {
 }
 
 .eyebrow {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--fg-muted);
 }
 
 .lede {
-  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  font-size: clamp(1.05rem, 2vw, 1.18rem);
   line-height: 1.6;
 }
 
 .fine-print,
 .hint {
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: var(--fg-muted);
+}
+
+/* A short horizontal bar used as the "nobody yet" placeholder. */
+.dash-mark {
+  display: inline-block;
+  width: 72px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--fg);
+  vertical-align: middle;
+}
+
+.dash-mark.is-sm {
+  width: 40px;
+  height: 5px;
 }
 
 /* ---------------------------------------------------------------
@@ -144,20 +172,25 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 11px 20px;
-  font-weight: 500;
+  gap: 10px;
+  min-height: 50px;
+  padding: 14px 24px;
+  font-size: 1.02rem;
+  font-weight: 600;
   text-decoration: none;
   border: 1px solid transparent;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease,
-    opacity 0.15s ease;
+    opacity 0.15s ease, transform 0.1s ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.99);
 }
 
 .btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -168,23 +201,24 @@ textarea {
 }
 
 .btn-primary:hover:not(:disabled) {
-  opacity: 0.85;
+  opacity: 0.88;
 }
 
 .btn-secondary {
   background: transparent;
   color: var(--fg);
-  border-color: var(--line);
+  border-color: var(--card-line);
 }
 
 .btn-secondary:hover:not(:disabled) {
   border-color: var(--line-strong);
+  background: var(--raised);
 }
 
 .btn-invert {
-  background: var(--bg);
+  background: var(--surface);
   color: var(--fg);
-  border-color: var(--bg);
+  border-color: var(--surface);
 }
 
 .btn-invert:hover:not(:disabled) {
@@ -192,15 +226,15 @@ textarea {
 }
 
 .btn-big {
-  min-height: 52px;
-  padding: 14px 26px;
-  font-size: 1.05rem;
+  min-height: 58px;
+  padding: 16px 28px;
+  font-size: 1.12rem;
 }
 
 .btn-small {
-  min-height: 38px;
-  padding: 7px 14px;
-  font-size: 0.9rem;
+  min-height: 44px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
 }
 
 .btn-block {
@@ -231,29 +265,40 @@ textarea {
 }
 
 /* ---------------------------------------------------------------
-   Theme switch
+   Theme switch (pill)
    --------------------------------------------------------------- */
 .theme-switch {
   display: inline-flex;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
+  padding: 4px;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: 999px;
 }
 
 .theme-switch button {
-  min-height: 36px;
-  padding: 6px 12px;
-  font-size: 0.85rem;
+  flex: 1 1 0;
+  min-height: 42px;
+  min-width: 132px;
+  padding: 8px 24px;
+  font-size: 1rem;
+  font-weight: 500;
   background: transparent;
   color: var(--fg-muted);
   border: none;
+  border-radius: 999px;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.theme-switch button:hover {
+  color: var(--fg);
 }
 
 .theme-switch button.active {
-  background: var(--fg);
-  color: var(--bg);
-  font-weight: 500;
+  background: var(--raised);
+  color: var(--fg);
+  font-weight: 600;
 }
 
 /* ---------------------------------------------------------------
@@ -288,13 +333,13 @@ textarea {
   align-items: center;
   flex-wrap: wrap;
   gap: 10px 20px;
-  min-height: 56px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  min-height: 68px;
+  padding-top: 14px;
+  padding-bottom: 14px;
 }
 
 .wordmark {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   text-decoration: none;
@@ -302,7 +347,7 @@ textarea {
 
 .site-nav {
   display: flex;
-  gap: 20px;
+  gap: 22px;
 }
 
 .site-nav a {
@@ -326,8 +371,9 @@ textarea {
 .site-footer {
   border-top: 1px solid var(--line);
   margin-top: 44px;
-  padding: 20px 0;
+  padding: 22px 0;
   font-size: 0.95rem;
+  color: var(--fg-muted);
 }
 
 .footer-inner {
@@ -342,39 +388,76 @@ textarea {
   color: var(--fg);
 }
 
-/* Dashboard header */
+/* Dashboard header: eyebrow wordmark over the business name */
 .dash-brand {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
   min-width: 0;
 }
 
-.brand-sep {
-  width: 1px;
-  height: 20px;
-  background: var(--line);
+.dash-eyebrow {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+
+.dash-eyebrow:hover {
+  color: var(--fg);
 }
 
 .dash-biz {
-  color: var(--fg-muted);
-  font-size: 0.95rem;
-  max-width: 260px;
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  max-width: 60vw;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.dash-signout {
+  font-size: 1.05rem;
+  color: var(--fg-muted);
+  text-decoration: none;
+}
+
+.dash-signout:hover {
+  color: var(--fg);
+}
+
+.dash-controls {
+  display: flex;
+  justify-content: center;
+  max-width: var(--app);
+  margin: 0 auto;
+  padding: 16px 24px 4px;
+}
+
+/* The Light/Dark pill sits at a fixed, reference-matching width. */
+.dash-controls .theme-switch {
+  width: 340px;
+  max-width: 100%;
+}
+
 .dash-nav {
   display: flex;
-  gap: 6px;
+  justify-content: center;
+  gap: 40px;
+  max-width: var(--app);
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
 .nav-link {
-  padding: 6px 10px;
+  padding: 12px 2px 15px;
+  font-size: 1.08rem;
+  font-weight: 500;
   color: var(--fg-muted);
   text-decoration: none;
-  font-weight: 500;
+  border-bottom: 3px solid transparent;
 }
 
 .nav-link:hover {
@@ -383,10 +466,8 @@ textarea {
 
 .nav-link.active {
   color: var(--fg);
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 7px;
-  text-decoration-thickness: 2px;
+  font-weight: 600;
+  border-bottom-color: var(--fg);
 }
 
 /* ---------------------------------------------------------------
@@ -395,7 +476,7 @@ textarea {
 .page {
   max-width: var(--shell);
   margin: 0 auto;
-  padding: 28px 24px 56px;
+  padding: 32px 24px 60px;
   width: 100%;
 }
 
@@ -403,12 +484,13 @@ textarea {
   max-width: 720px;
 }
 
-.center {
-  text-align: center;
+.dash-page {
+  max-width: var(--app);
+  padding-top: 26px;
 }
 
-.page-title {
-  margin-bottom: 18px;
+.center {
+  text-align: center;
 }
 
 .page-state {
@@ -429,9 +511,9 @@ textarea {
 }
 
 .spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--line);
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--card-line);
   border-top-color: var(--fg);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -444,18 +526,24 @@ textarea {
 }
 
 .notice {
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--line-strong);
-  background: var(--bg-soft);
-  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius-sm);
+  padding: 15px 18px;
   margin: 16px 0;
 }
 
+.notice strong {
+  font-weight: 600;
+}
+
 .form-error {
-  border-left: 3px solid var(--fg);
-  background: var(--bg-soft);
-  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
   margin: 14px 0;
+  color: var(--danger);
   font-weight: 500;
 }
 
@@ -466,47 +554,46 @@ textarea {
 .field label {
   display: block;
   font-weight: 500;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
 
 .field input,
 .field textarea {
   width: 100%;
-  min-height: 46px;
-  padding: 11px 14px;
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  min-height: 54px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius-sm);
 }
 
 .field textarea {
   resize: vertical;
-  min-height: 88px;
+  min-height: 96px;
 }
 
 .field input:focus,
 .field textarea:focus {
-  border-color: var(--line-strong);
-  outline: 2px solid var(--fg);
-  outline-offset: 1px;
+  border-color: var(--fg);
+  outline: none;
 }
 
 .field input::placeholder,
 .field textarea::placeholder {
   color: var(--fg-muted);
-  opacity: 0.75;
+  opacity: 0.8;
 }
 
 .field-hint {
   font-size: 0.88rem;
   color: var(--fg-muted);
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .row-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: flex-end;
 }
 
@@ -516,18 +603,18 @@ textarea {
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-  gap: 36px;
+  gap: 40px;
   align-items: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
+  padding-top: 44px;
+  padding-bottom: 44px;
 }
 
 .hero h1 {
-  font-size: clamp(2.1rem, 5.5vw, 3.2rem);
+  font-size: clamp(2.1rem, 5.5vw, 3.1rem);
   line-height: 1.05;
   letter-spacing: -0.03em;
   font-weight: 500;
-  margin: 10px 0 14px;
+  margin: 12px 0 16px;
 }
 
 .hero .lede {
@@ -538,17 +625,19 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 22px;
+  margin-top: 24px;
 }
 
 .hero .fine-print {
-  margin-top: 14px;
+  margin-top: 16px;
   max-width: 36em;
 }
 
 .hero-ticket {
-  border: 1px solid var(--line-strong);
-  background: var(--bg);
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 6px 22px;
 }
 
 .hero-ticket-row {
@@ -557,17 +646,17 @@ textarea {
   align-items: baseline;
   justify-content: space-between;
   gap: 8px 16px;
-  padding: 18px 20px;
+  padding: 18px 0;
 }
 
 .hero-ticket-row + .hero-ticket-row {
-  border-top: 1px dashed var(--line-strong);
+  border-top: 1px solid var(--card-line);
 }
 
 .hero-ticket-label {
   font-size: 0.8rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--fg-muted);
 }
@@ -587,7 +676,7 @@ textarea {
 }
 
 .section {
-  padding: 36px 0;
+  padding: 40px 0;
 }
 
 .section-rule {
@@ -619,7 +708,7 @@ textarea {
   grid-template-columns: 56px minmax(0, 1fr);
   gap: 8px 20px;
   align-items: start;
-  padding: 14px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -643,7 +732,7 @@ textarea {
 .split {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 36px;
+  gap: 40px;
   align-items: start;
 }
 
@@ -651,7 +740,10 @@ textarea {
   list-style: none;
   padding: 0;
   margin: 0;
-  border-top: 1px solid var(--line);
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 4px 22px;
 }
 
 .demo-lines li {
@@ -659,8 +751,11 @@ textarea {
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+}
+
+.demo-lines li + li {
+  border-top: 1px solid var(--card-line);
 }
 
 .demo-lines span {
@@ -678,19 +773,23 @@ textarea {
 }
 
 .use-list {
-  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
-  line-height: 2;
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+  line-height: 1.9;
   max-width: 30em;
 }
 
 .band {
-  background: var(--fg);
-  color: var(--bg);
-  padding: 36px 0;
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  color: var(--fg);
+  padding: 40px;
+  margin: 12px 0;
 }
 
 .band h2 {
-  font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 600;
 }
 
 .band-inner {
@@ -706,22 +805,23 @@ textarea {
    --------------------------------------------------------------- */
 .auth-page {
   max-width: 460px;
-  padding-top: 36px;
+  padding-top: 40px;
 }
 
 .auth-panel {
-  border: 1px solid var(--line-strong);
-  padding: 26px 22px;
-  background: var(--bg);
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 30px 26px;
 }
 
 .auth-sub {
   color: var(--fg-muted);
-  margin: 6px 0 20px;
+  margin: 8px 0 22px;
 }
 
 .auth-switch {
-  margin-top: 22px;
+  margin-top: 24px;
   color: var(--fg-muted);
 }
 
@@ -730,16 +830,11 @@ textarea {
    --------------------------------------------------------------- */
 .customer-page {
   min-height: 100vh;
-  max-width: 480px;
+  max-width: var(--app);
   margin: 0 auto;
-  padding: 18px 16px 32px;
+  padding: 26px 22px 40px;
   display: flex;
   flex-direction: column;
-}
-
-.customer-head {
-  text-align: center;
-  margin-bottom: 16px;
 }
 
 .customer-top {
@@ -747,11 +842,11 @@ textarea {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
 }
 
 .customer-brand {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .customer-brand a {
@@ -763,19 +858,27 @@ textarea {
   color: var(--fg);
 }
 
+.customer-head {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
 .customer-head h1 {
-  font-size: 1.4rem;
+  font-size: clamp(2rem, 8vw, 2.9rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
 .customer-note {
   color: var(--fg-muted);
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 0.98rem;
 }
 
 .customer-foot {
   margin-top: auto;
-  padding-top: 36px;
+  padding-top: 40px;
   text-align: center;
   font-size: 0.88rem;
   color: var(--fg-muted);
@@ -785,54 +888,125 @@ textarea {
   color: var(--fg-muted);
 }
 
-.ticket-panel {
-  border: 1px solid var(--line-strong);
-  padding: 24px 20px;
+/* The hero "your number" card */
+.ticket-hero {
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 54px 24px 46px;
   text-align: center;
-  background: var(--bg);
-}
-
-.ticket-panel + .ticket-panel {
-  margin-top: 16px;
 }
 
 .ticket-number {
-  font-size: clamp(3.6rem, 18vw, 4.8rem);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.04em;
+  font-size: clamp(5rem, 22vw, 7rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
   font-variant-numeric: tabular-nums;
-  margin: 10px 0 6px;
 }
 
 .ticket-ahead {
-  font-size: 1.15rem;
+  font-size: clamp(1.5rem, 6vw, 1.9rem);
   font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-top: 10px;
 }
 
-.ticket-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 18px;
+.ticket-panel {
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 30px 24px;
+  text-align: center;
 }
 
-.ticket-split > div {
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
+.cust-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.split-number {
-  font-size: 1.55rem;
-  font-weight: 500;
+/* Small labelled cards: now serving / people waiting */
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  text-align: left;
+}
+
+.stat-label {
+  font-size: 1.05rem;
+  color: var(--fg-muted);
+}
+
+.stat-value {
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
-  margin-top: 4px;
+  margin-top: 8px;
+}
+
+.stat-value .dash-mark {
+  margin-top: 8px;
+  vertical-align: 10px;
 }
 
 .reassure {
-  margin-top: 16px;
-  font-size: 0.92rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 1rem;
   color: var(--fg-muted);
+  padding: 2px 4px;
+}
+
+.reassure-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 9px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+}
+
+.leave-btn {
+  min-height: 62px;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.leave-btn svg {
+  flex: none;
+  width: 26px;
+  height: 26px;
+}
+
+.join-panel {
+  text-align: left;
+}
+
+.join-panel h2 {
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.stat-inline {
+  color: var(--fg-muted);
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+
+.stat-inline strong {
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.dot {
+  margin: 0 8px;
 }
 
 .ticket-foot {
@@ -846,28 +1020,24 @@ textarea {
 }
 
 .is-next {
-  border-width: 2px;
-}
-
-.is-next .ticket-ahead {
-  font-weight: 500;
+  border-color: var(--line-strong);
 }
 
 .is-turn {
-  background: var(--fg);
-  color: var(--bg);
-  border-color: var(--fg);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border-color: var(--btn-bg);
 }
 
 .is-turn .eyebrow {
-  color: var(--bg);
-  opacity: 0.75;
+  color: var(--btn-fg);
+  opacity: 0.7;
 }
 
 .is-turn .btn-primary {
-  background: var(--bg);
-  color: var(--fg);
-  border-color: var(--bg);
+  background: var(--btn-fg);
+  color: var(--btn-bg);
+  border-color: var(--btn-fg);
 }
 
 .is-turn .confirmed-line {
@@ -878,127 +1048,125 @@ textarea {
 
 .is-turn .form-error {
   background: transparent;
-  border-left-color: var(--bg);
-  color: var(--bg);
+  color: var(--btn-fg);
+  border-color: var(--btn-fg);
   text-align: left;
-}
-
-.join-panel {
-  text-align: left;
-}
-
-.join-panel h2 {
-  margin-bottom: 18px;
-}
-
-.stat-inline {
-  color: var(--fg-muted);
-  font-size: 0.95rem;
-  margin-bottom: 16px;
-}
-
-.stat-inline strong {
-  color: var(--fg);
-  font-variant-numeric: tabular-nums;
-}
-
-.dot {
-  margin: 0 8px;
 }
 
 /* ---------------------------------------------------------------
    Dashboard
    --------------------------------------------------------------- */
 .now-section {
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 34px 26px 26px;
+  margin-bottom: 26px;
+  text-align: center;
+}
+
+.now-main {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px 32px;
-  border: 1px solid var(--line-strong);
-  padding: 18px 20px;
-  margin-bottom: 10px;
 }
 
 .now-number {
-  font-size: clamp(2.7rem, 7vw, 3.7rem);
-  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  font-size: clamp(3.4rem, 14vw, 4.4rem);
+  font-weight: 600;
   line-height: 1;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.045em;
   font-variant-numeric: tabular-nums;
-  margin: 6px 0;
+  margin: 18px 0 14px;
+  min-height: 1em;
 }
 
 .now-detail {
-  color: var(--fg-muted);
+  font-size: clamp(1.3rem, 5.5vw, 1.6rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.now-detail .muted {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-top: 6px;
 }
 
 .now-side {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
+  gap: 12px;
+  margin-top: 28px;
   text-align: center;
-  min-width: 210px;
 }
 
 .now-side .hint {
-  margin-top: -4px;
+  order: 3;
 }
 
 .queue-section {
-  margin-top: 24px;
+  margin-top: 26px;
 }
 
 .queue-section h2 {
   display: flex;
   align-items: baseline;
-  gap: 10px;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-weight: 600;
 }
 
 .count {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 500;
   color: var(--fg-muted);
   font-variant-numeric: tabular-nums;
 }
 
 .next-up {
-  padding: 12px 0 4px;
-}
-
-.next-up strong {
-  font-variant-numeric: tabular-nums;
+  padding: 0 0 12px;
+  color: var(--fg-muted);
 }
 
 .queue-list {
   list-style: none;
   padding: 0;
-  margin: 8px 0 0;
-  border-top: 1px solid var(--line);
+  margin: 0;
 }
 
 .queue-row {
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr) auto auto;
-  gap: 10px 16px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 18px;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.queue-row .row-actions {
-  grid-column: auto;
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
 }
 
 .q-num {
-  font-weight: 500;
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
 }
 
-.q-name {
+.q-meta {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+}
+
+.q-name {
+  font-size: 1.05rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1006,55 +1174,74 @@ textarea {
 
 .q-time {
   color: var(--fg-muted);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-variant-numeric: tabular-nums;
+}
+
+.queue-row .row-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 15px;
+  border-top: 1px solid var(--card-line);
+}
+
+.queue-row .row-actions .btn {
+  flex: 1 1 0;
+  min-height: 50px;
+  padding: 12px 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .q-status {
   font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fg-muted);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 4px 9px;
+  border: 1px solid var(--card-line);
+  border-radius: 999px;
+  padding: 5px 12px;
   white-space: nowrap;
   justify-self: end;
 }
 
 .queue-row.is-current {
-  border: 1px solid var(--line-strong);
-  border-bottom-width: 1px;
-  padding: 10px 12px;
-  margin: 8px 0;
+  border-color: var(--line-strong);
+}
+
+.queue-list-quiet {
+  display: flex;
+  flex-direction: column;
 }
 
 .queue-list-quiet .queue-row {
-  padding: 10px 0;
-}
-
-.queue-list-quiet .q-num,
-.queue-list-quiet .q-name {
-  color: var(--fg-muted);
-  font-weight: 400;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 14px 20px;
+  margin-bottom: 10px;
 }
 
 .queue-list-quiet .q-num {
-  font-weight: 500;
+  font-size: 1.15rem;
+}
+
+.queue-list-quiet .q-name,
+.queue-list-quiet .q-num {
+  color: var(--fg-muted);
 }
 
 .empty-line {
   color: var(--fg-muted);
-  padding: 18px 0;
+  padding: 20px 0;
 }
 
 .first-run {
-  border: 1px solid var(--line);
-  background: var(--bg-soft);
-  padding: 16px 18px;
-  margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--card-line);
   border-radius: var(--radius);
+  padding: 20px 22px;
 }
 
 .first-run .steps {
@@ -1077,14 +1264,14 @@ textarea {
 
 .finished-list summary {
   cursor: pointer;
-  font-weight: 500;
-  padding: 10px 0;
+  font-weight: 600;
+  padding: 6px 0 12px;
 }
 
 .counts {
   color: var(--fg-muted);
   font-size: 0.92rem;
-  padding-top: 6px;
+  padding-top: 8px;
 }
 
 /* ---------------------------------------------------------------
@@ -1092,7 +1279,7 @@ textarea {
    --------------------------------------------------------------- */
 .qr-intro {
   color: var(--fg-muted);
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .qr-layout {
@@ -1105,8 +1292,8 @@ textarea {
 .qr-sheet {
   background: #ffffff;
   color: #000000;
-  border: 1px solid var(--line);
-  padding: 26px 24px;
+  border-radius: var(--radius);
+  padding: 30px 28px;
   text-align: center;
   width: 100%;
   max-width: 420px;
@@ -1120,7 +1307,7 @@ textarea {
 
 .qr-sheet img {
   margin: 22px auto;
-  width: min(320px, 62vw);
+  width: min(300px, 60vw);
   height: auto;
   image-rendering: pixelated;
 }
@@ -1134,7 +1321,8 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px dashed #999999;
+  border: 2px dashed #999999;
+  border-radius: var(--radius);
   color: #5c5c5c;
   margin: 22px 0;
 }
@@ -1162,8 +1350,6 @@ textarea {
    --------------------------------------------------------------- */
 .settings-form {
   max-width: 480px;
-  border-top: 1px solid var(--line);
-  padding-top: 20px;
 }
 
 .settings-actions {
@@ -1178,14 +1364,16 @@ textarea {
 }
 
 .settings-section {
-  margin-top: 32px;
-  border-top: 1px solid var(--line);
-  padding-top: 20px;
-  max-width: 620px;
+  margin-top: 34px;
+  background: var(--surface);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 24px 26px;
 }
 
 .settings-section h2 {
   font-size: 1.15rem;
+  font-weight: 600;
   margin-bottom: 8px;
 }
 
@@ -1200,10 +1388,10 @@ textarea {
 }
 
 .settings-facts code {
-  background: var(--bg-soft);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 2px 7px;
+  background: var(--raised);
+  border: 1px solid var(--card-line);
+  border-radius: 6px;
+  padding: 3px 8px;
   font-size: 0.9em;
 }
 
@@ -1211,19 +1399,20 @@ textarea {
    About
    --------------------------------------------------------------- */
 .about {
-  padding-top: 24px;
+  padding-top: 28px;
 }
 
 .about-photo {
   width: 148px;
   height: 148px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  margin-bottom: 20px;
+  border: 1px solid var(--card-line);
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 22px;
 }
 
 .about h1 {
-  margin: 10px 0 16px;
+  margin: 12px 0 16px;
 }
 
 .about .lede {
@@ -1250,13 +1439,14 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
-  padding: 6px 10px;
-  font-size: 1.1rem;
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 1.15rem;
   line-height: 1;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--card-line);
+  border-radius: 999px;
   cursor: pointer;
 }
 
@@ -1313,8 +1503,8 @@ textarea {
 
 .lang-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
   margin-top: 20px;
 }
 
@@ -1322,11 +1512,11 @@ textarea {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  background: var(--bg);
+  padding: 12px 14px;
+  background: var(--surface);
   color: var(--fg);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   text-align: left;
   transition: border-color 0.15s ease, background-color 0.15s ease;
@@ -1337,8 +1527,8 @@ textarea {
 }
 
 .lang-option.active {
-  border-color: var(--line-strong);
-  background: var(--bg-soft);
+  border-color: var(--fg);
+  background: var(--raised);
 }
 
 .lang-flag {
@@ -1392,35 +1582,13 @@ textarea {
   .qr-sheet {
     max-width: 460px;
   }
+
+  .band {
+    padding: 30px 24px;
+  }
 }
 
 @media (max-width: 700px) {
-  .queue-row {
-    grid-template-columns: 66px minmax(0, 1fr) auto;
-  }
-
-  .queue-row .row-actions {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-  }
-
-  .q-status {
-    justify-self: start;
-  }
-
-  .queue-row.is-current .row-actions {
-    grid-column: 1 / -1;
-  }
-
-  .now-section {
-    padding: 22px 18px;
-  }
-
-  .now-side {
-    min-width: 0;
-    width: 100%;
-  }
-
   .header-actions {
     margin-left: 0;
     width: 100%;
@@ -1433,6 +1601,10 @@ textarea {
   .footer-inner {
     flex-direction: column;
   }
+
+  .queue-row .row-actions .btn {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1440,23 +1612,46 @@ textarea {
     position: static;
   }
 
+  .dash-biz {
+    font-size: 1.5rem;
+    max-width: 52vw;
+  }
+
   .dash-nav {
-    width: 100%;
-    order: 3;
-    border-top: 1px solid var(--line);
-    padding-top: 6px;
+    gap: 28px;
+  }
+
+  .nav-link {
+    font-size: 1rem;
+  }
+
+  .theme-switch button {
+    min-width: 0;
+    padding: 8px 18px;
   }
 
   .page {
-    padding-top: 28px;
+    padding-top: 30px;
   }
 
-  .auth-panel {
-    padding: 26px 20px;
+  .customer-page {
+    padding: 22px 16px 32px;
   }
 
-  .ticket-panel {
-    padding: 28px 20px;
+  .ticket-hero {
+    padding: 44px 20px 38px;
+  }
+
+  .now-section {
+    padding: 28px 20px 22px;
+  }
+
+  .queue-row .row-actions {
+    flex-wrap: wrap;
+  }
+
+  .queue-row .row-actions .btn {
+    flex: 1 1 46%;
   }
 }
 

@@ -68,31 +68,32 @@ export default function DashboardLayout() {
       <header className="site-header dash-header">
         <div className="shell-inner header-inner">
           <div className="dash-brand">
-            <Link to="/dashboard" className="wordmark">
+            <Link to="/dashboard" className="wordmark dash-eyebrow">
               Lobby
             </Link>
-            <span className="brand-sep" aria-hidden="true" />
             <span className="dash-biz">{snapshot.business.name}</span>
           </div>
-          <nav className="dash-nav" aria-label="Dashboard">
-            <NavLink to="/dashboard" end className={({ isActive }) => navClass(isActive)}>
-              {t("dash.navQueue")}
-            </NavLink>
-            <NavLink to="/dashboard/qr" className={({ isActive }) => navClass(isActive)}>
-              {t("dash.navQr")}
-            </NavLink>
-            <NavLink to="/dashboard/settings" className={({ isActive }) => navClass(isActive)}>
-              {t("dash.navSettings")}
-            </NavLink>
-          </nav>
           <div className="header-actions">
             <LangButton />
-            <ThemeToggle />
-            <button type="button" className="link-button" onClick={() => void signOut()}>
+            <button type="button" className="link-button dash-signout" onClick={() => void signOut()}>
               {t("dash.signOut")}
             </button>
           </div>
         </div>
+        <div className="dash-controls">
+          <ThemeToggle />
+        </div>
+        <nav className="dash-nav" aria-label="Dashboard">
+          <NavLink to="/dashboard" end className={({ isActive }) => navClass(isActive)}>
+            {t("dash.navQueue")}
+          </NavLink>
+          <NavLink to="/dashboard/qr" className={({ isActive }) => navClass(isActive)}>
+            {t("dash.navQr")}
+          </NavLink>
+          <NavLink to="/dashboard/settings" className={({ isActive }) => navClass(isActive)}>
+            {t("dash.navSettings")}
+          </NavLink>
+        </nav>
       </header>
 
       <main className="page dash-page">

@@ -84,8 +84,6 @@ export default function DashboardQueue() {
 
   return (
     <>
-      <h1 className="page-title">{t("dash.navQueue")}</h1>
-
       {business.paused && (
         <div className="notice" role="status">
           <strong>{t("cust.pausedT")}</strong> {t("dash.pausedB")}
@@ -95,13 +93,14 @@ export default function DashboardQueue() {
       <section className="now-section" aria-live="polite">
         <div className="now-main">
           <p className="eyebrow">{t("demo.nowServing")}</p>
-          <p className="now-number">{current ? `#${current.number}` : "·"}</p>
+          <p className="now-number">
+            {current ? `#${current.number}` : <span className="dash-mark" />}
+          </p>
           <p className="now-detail">
             {current ? current.name || t("dash.noNameGiven") : t("dash.nobodyCounter")}
             {current && (
               <span className="muted">
-                {" "}
-                · {current.confirmed ? t("dash.confirmedHere") : t("dash.notConfirmed")}
+                {current.confirmed ? t("dash.confirmedHere") : t("dash.notConfirmed")}
               </span>
             )}
           </p>
@@ -109,21 +108,21 @@ export default function DashboardQueue() {
         <div className="now-side">
           <button
             type="button"
-            className="btn btn-primary btn-big"
+            className="btn btn-primary btn-big btn-block"
             disabled={busy !== null || waiting.length === 0}
             onClick={() => void run("call-next", "/api/staff/queue/call-next")}
           >
             {busy === "call-next" ? t("dash.calling") : t("dash.callNext")}
           </button>
-          {waiting.length === 0 && <p className="hint">{t("dash.noWaitingHint")}</p>}
           <button
             type="button"
-            className="btn btn-secondary btn-small"
+            className="btn btn-secondary btn-big btn-block"
             disabled={busy !== null}
             onClick={() => void run("pause", "/api/staff/queue/pause", { paused: !business.paused })}
           >
             {business.paused ? t("dash.resume") : t("dash.pause")}
           </button>
+          {waiting.length === 0 && <p className="hint">{t("dash.noWaitingHint")}</p>}
         </div>
       </section>
 
@@ -139,8 +138,12 @@ export default function DashboardQueue() {
           <ul className="queue-list">
             <li className="queue-row is-current">
               <span className="q-num">#{current.number}</span>
-              <span className="q-name">{current.name || <span className="muted">{t("dash.noName")}</span>}</span>
-              <span className="q-time">{timeOf(current.createdAt)}</span>
+              <span className="q-meta">
+                <span className="q-name">
+                  {current.name || <span className="muted">{t("dash.noName")}</span>}
+                </span>
+                <span className="q-time">{timeOf(current.createdAt)}</span>
+              </span>
               {actionsFor(current)}
             </li>
           </ul>
@@ -200,8 +203,12 @@ export default function DashboardQueue() {
               {waiting.map((ticket) => (
                 <li className="queue-row" key={ticket.id}>
                   <span className="q-num">#{ticket.number}</span>
-                  <span className="q-name">{ticket.name || <span className="muted">{t("dash.noName")}</span>}</span>
-                  <span className="q-time">{timeOf(ticket.createdAt)}</span>
+                  <span className="q-meta">
+                    <span className="q-name">
+                      {ticket.name || <span className="muted">{t("dash.noName")}</span>}
+                    </span>
+                    <span className="q-time">{timeOf(ticket.createdAt)}</span>
+                  </span>
                   {actionsFor(ticket)}
                 </li>
               ))}
@@ -220,8 +227,12 @@ export default function DashboardQueue() {
               {finished.map((ticket) => (
                 <li className="queue-row" key={ticket.id}>
                   <span className="q-num">#{ticket.number}</span>
-                  <span className="q-name">{ticket.name || <span className="muted">{t("dash.noName")}</span>}</span>
-                  <span className="q-time">{timeOf(ticket.createdAt)}</span>
+                  <span className="q-meta">
+                    <span className="q-name">
+                      {ticket.name || <span className="muted">{t("dash.noName")}</span>}
+                    </span>
+                    <span className="q-time">{timeOf(ticket.createdAt)}</span>
+                  </span>
                   <span className={`q-status status-${ticket.status.replace("_", "-")}`}>
                     {t(STATUS_KEY[ticket.status])}
                   </span>
