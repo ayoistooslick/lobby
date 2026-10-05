@@ -46,7 +46,7 @@ There is no UI framework and no external service. `npm install` is all you need.
 Requires **Node.js 20.19+** (Node 22 or newer recommended).
 
 ```bash
-git clone <your-fork-url> lobby
+git clone https://github.com/ayoistooslick/lobby.git lobby
 cd lobby
 npm install
 npm run dev
