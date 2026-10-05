@@ -33,8 +33,8 @@ codebase in an afternoon.
 | Layer      | Choice                                                       |
 | ---------- | ------------------------------------------------------------ |
 | Frontend   | React 19 + TypeScript, built with Vite, plain CSS             |
-| Backend    | Node.js + Express (TypeScript, compiled to CommonJS)          |
-| Database   | SQLite through `better-sqlite3`, one file, nothing to set up  |
+| Backend    | Node.js + Express 5 (TypeScript, compiled to CommonJS)         |
+| Database   | PostgreSQL when `DATABASE_URL` is set, otherwise SQLite through `better-sqlite3` |
 | Real-time  | Server-Sent Events (one tiny "something changed" signal)      |
 | Auth       | `httpOnly` session cookie, scrypt-hashed passwords            |
 | QR codes   | `qrcode`, generated in the browser                            |
@@ -68,14 +68,30 @@ Other scripts: `npm run dev:server`, `npm run dev:client`, `npm run typecheck`.
 
 ## Environment variables
 
-Only three, and all of them have sensible local defaults. **No secrets are required**,
-session tokens are random values created at login and stored server-side as hashes.
+All of them are optional, and none are secrets required to run locally.
+Session tokens are random values created at login and stored server-side as hashes.
 
 | Variable        | Default            | Purpose                                                                 |
 | --------------- | ------------------ | ----------------------------------------------------------------------- |
 | `PORT`          | `3000`             | Port the HTTP server listens on (hosts like Render inject this)         |
-| `DATABASE_PATH` | `./data/lobby.db`  | Where the SQLite file lives. Point this at a persistent disk in prod    |
+| `DATABASE_URL`  | unset              | PostgreSQL connection string. **When set, Lobby uses Postgres; when unset, it falls back to the SQLite file automatically** |
+| `DATABASE_PATH` | `./data/lobby.db`  | SQLite file location (only used when `DATABASE_URL` is not set)         |
 | `NODE_ENV`      | unset              | Set to `production` in production so session cookies get the `Secure` flag |
+
+### Choosing a database
+
+Lobby supports two storage engines behind one interface:
+
+- **PostgreSQL** — set `DATABASE_URL`, e.g.
+  `postgres://user:password@host:5432/dbname?sslmode=require`.
+  Use this on any host without a persistent disk (Render, Railway, Fly, Koyeb…).
+  Tables are created on first boot; TLS is enabled automatically when the URL
+  asks for `sslmode=require`.
+- **SQLite (default)** — with no `DATABASE_URL`, data goes to a single file at
+  `DATABASE_PATH`. Zero setup, perfect for local development.
+
+The active engine is printed at boot (`storage: PostgreSQL` / `storage: SQLite file`)
+and reported by `GET /api/health` as `"store": "postgres" | "sqlite"`.
 
 ## How it works
 
@@ -96,7 +112,8 @@ Browser (React SPA)                      Express server
 - **The server owns the state.** Positions, "now serving", and turn order are computed
   from the database on every request. The client only ever displays them.
 - **Call next is one transaction:** the person at the counter is marked served, and the
-  oldest waiting number is promoted to "called".
+  oldest waiting number is promoted to "called". The same guarantee holds on Postgres,
+  where row locks keep two staff taps from promoting the same ticket.
 
 ### Data model
 
@@ -125,7 +142,9 @@ Numbers restart each day and are unique per business per day.
 ```
 server/             Express API
   index.ts          app setup, static files, error handling
-  db.ts             SQLite connection, schema, queries
+  store.ts          storage facade: Postgres when DATABASE_URL is set, else SQLite
+  pg.ts             PostgreSQL engine (schema, queries, transactions)
+  rows.ts           shared row types
   auth.ts           passwords, sessions, cookies
   events.ts         the SSE hub
   validate.ts       input checks and ApiError
@@ -141,13 +160,13 @@ public/             favicon
 
 ## Deployment
 
-Lobby is a single Node process plus a SQLite file, so any host that runs a long-lived
-Node app with a writable disk will do. In every case you need:
+Lobby is a single Node process. With `DATABASE_URL` set it needs no writable disk at
+all, which makes it a fit for every long-lived Node host:
 
 1. **Build command:** `npm install && npm run build`
 2. **Start command:** `npm start`
-3. **Environment variables:** `NODE_ENV=production` and a `DATABASE_PATH` on a
-   persistent disk/volume. (`PORT` is provided by most hosts.)
+3. **Environment variables:** `NODE_ENV=production` and `DATABASE_URL` pointing at
+   your Postgres database. (`PORT` is provided by most hosts.)
 
 ### Render
 
@@ -155,18 +174,18 @@ Node app with a writable disk will do. In every case you need:
 2. Use these settings:
    - **Build command:** `npm install && npm run build`
    - **Start command:** `npm start`
-3. Add a **persistent disk** (e.g.1 GB) and mount it at `/var/data`.
-4. Add the environment variables:
+3. Add the environment variables:
 
-   | Key              | Value                  |
-   | ---------------- | ---------------------- |
-   | `NODE_ENV`       | `production`           |
-   | `DATABASE_PATH`  | `/var/data/lobby.db`   |
+   | Key              | Value                                                      |
+   | ---------------- | ---------------------------------------------------------- |
+   | `NODE_ENV`       | `production`                                               |
+   | `DATABASE_URL`   | your Postgres connection string (`sslmode=require` advised) |
 
    `PORT` is set by Render automatically.
 
 Render gives the app a public HTTPS URL, and that's the URL your QR code will point to.
-Without a disk, the queue still runs but the database is wiped on redeploy, so add one.
+With `DATABASE_URL` there is no need for a persistent disk: the queue survives redeploys
+and restarts because the data lives in Postgres, not on the instance.
 
 ### Railway, Fly.io, Koyeb (and similar PaaS)
 
@@ -174,9 +193,11 @@ Same shape as Render:
 
 - **Build:** `npm install && npm run build`
 - **Start:** `npm start`
-- **Env vars:** `NODE_ENV=production`, `DATABASE_PATH=/data/lobby.db` (or any path
-  inside the volume you attach), plus a mounted volume at `/data`.
+- **Env vars:** `NODE_ENV=production` and `DATABASE_URL`. No volume required.
 - `PORT` is injected by the platform; the server listens on it automatically.
+
+Prefer SQLite instead? Attach a persistent volume and set `DATABASE_PATH` to a file on
+that volume — then omit `DATABASE_URL` and the file engine takes over.
 
 ### A VPS (DigitalOcean, Hetzner, AWS EC2…)
 
@@ -184,7 +205,7 @@ Run it behind a reverse proxy:
 
 ```bash
 # on the server, after cloning and npm install && npm run build
-NODE_ENV=production DATABASE_PATH=/srv/lobby/lobby.db PORT=3000 npm start
+NODE_ENV=production DATABASE_URL='postgres://user:password@host:5432/dbname?sslmode=require' PORT=3000 npm start
 ```
 
 Terminate TLS with Caddy or Nginx and proxy to `localhost:3000`. A tiny systemd unit
@@ -199,9 +220,8 @@ queue.example.com {
 ### What doesn't work
 
 Static-only hosts (GitHub Pages, Netlify static) can't run Lobby: it needs the Express
-server and a writable disk. Serverless platforms (Vercel functions, Netlify functions)
-would need changes, because they can't hold SSE connections or write to a file-backed
-SQLite database.
+server. Serverless platforms (Vercel functions, Netlify functions) would need changes,
+because they can't hold SSE connections open.
 
 ## License
 

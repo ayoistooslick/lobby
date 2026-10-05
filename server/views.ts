@@ -1,4 +1,4 @@
-import { peopleAhead, type BusinessRow, type TicketRow } from "./db";
+import { store, type BusinessRow, type TicketRow } from "./store";
 
 export function publicBusiness(business: BusinessRow) {
   return {
@@ -20,14 +20,14 @@ export function queueView(business: BusinessRow) {
   };
 }
 
-export function ticketView(ticket: TicketRow) {
+export async function ticketView(ticket: TicketRow) {
   return {
     id: ticket.id,
     number: ticket.number,
     name: ticket.name,
     status: ticket.status,
     confirmed: ticket.confirmed === 1,
-    peopleAhead: ticket.status === "waiting" ? peopleAhead(ticket) : 0,
+    peopleAhead: ticket.status === "waiting" ? await store.peopleAhead(ticket) : 0,
     createdAt: ticket.created_at,
   };
 }

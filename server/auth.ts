@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
-import { db, type BusinessRow } from "./db";
+import { store, type BusinessRow } from "./store";
 import { ApiError } from "./validate";
 
 const SESSION_COOKIE = "lobby_session";
@@ -36,37 +36,33 @@ function hashToken(token: string): string {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
 
-export function createSession(businessId: string): { token: string; expiresAt: number } {
+export async function createSession(businessId: string): Promise<{ token: string; expiresAt: number }> {
   const token = crypto.randomBytes(32).toString("hex");
   const now = Date.now();
   const expiresAt = now + SESSION_MS;
-  db.prepare("INSERT INTO sessions (token_hash, business_id, created_at, expires_at) VALUES (?, ?, ?, ?)").run(
-    hashToken(token),
-    businessId,
-    now,
-    expiresAt
-  );
+  await store.createSession(businessId, hashToken(token), now, expiresAt);
   return { token, expiresAt };
 }
 
-export function deleteSession(token: string): void {
-  db.prepare("DELETE FROM sessions WHERE token_hash = ?").run(hashToken(token));
+export async function deleteSession(token: string): Promise<void> {
+  await store.deleteSession(hashToken(token));
 }
 
-export function businessForToken(token: string): BusinessRow | null {
-  const row = db
-    .prepare(
-      `SELECT b.* FROM sessions s JOIN businesses b ON b.id = s.business_id
-       WHERE s.token_hash = ? AND s.expires_at > ?`
-    )
-    .get(hashToken(token), Date.now()) as BusinessRow | undefined;
-  return row ?? null;
+export async function businessForToken(token: string): Promise<BusinessRow | null> {
+  return store.businessForToken(hashToken(token), Date.now());
 }
 
-db.prepare("DELETE FROM sessions WHERE expires_at < ?").run(Date.now());
-setInterval(() => {
-  db.prepare("DELETE FROM sessions WHERE expires_at < ?").run(Date.now());
-}, 6 * 60 * 60 * 1000).unref();
+// Expired sessions are swept at boot and then on an interval.
+let prunerStarted = false;
+export function startSessionPruner(): void {
+  if (prunerStarted) return;
+  prunerStarted = true;
+  void store.pruneSessions(Date.now());
+  const timer = setInterval(() => {
+    void store.pruneSessions(Date.now());
+  }, 6 * 60 * 60 * 1000);
+  timer.unref();
+}
 
 export function readSessionToken(req: Request): string | null {
   const header = req.headers.cookie;
@@ -89,9 +85,9 @@ export function clearSessionCookie(res: Response): void {
   res.append("Set-Cookie", `${SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`);
 }
 
-export function requireAuth(req: Request, _res: Response, next: NextFunction): void {
+export async function requireAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
   const token = readSessionToken(req);
-  const business = token ? businessForToken(token) : null;
+  const business = token ? await businessForToken(token) : null;
   if (!business) {
     next(new ApiError(401, "Please sign in to continue."));
     return;
@@ -100,10 +96,10 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction): v
   next();
 }
 
-export function authed(req: Request): BusinessRow {
+export async function authed(req: Request): Promise<BusinessRow> {
   if (req.business) return req.business;
   const token = readSessionToken(req);
-  const business = token ? businessForToken(token) : null;
+  const business = token ? await businessForToken(token) : null;
   if (!business) throw new ApiError(401, "Please sign in to continue.");
   return business;
 }
