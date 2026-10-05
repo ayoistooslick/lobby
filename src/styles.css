@@ -1692,4 +1692,307 @@ textarea {
     max-width: none;
     border: 2px solid #000000;
   }
+}/* ---------------------------------------------------------------
+   Reference dashboard polish
+   --------------------------------------------------------------- */
+:root {
+  --app: 784px;
+}
+
+[data-theme="dark"] {
+  --bg: #000000;
+  --surface: #050505;
+  --raised: #171717;
+  --line: #383838;
+  --line-strong: #575757;
+  --card-line: #3b3b3b;
+  --fg-muted: #a3a3a3;
+}
+
+.btn svg,
+.nav-link svg,
+.dash-signout svg,
+.theme-switch svg,
+.lang-head h2 svg {
+  flex: none;
+}
+
+.dash-header {
+  background: var(--bg);
+  border-bottom-color: var(--line);
+}
+
+.dash-header .shell-inner,
+.dash-nav {
+  max-width: 784px;
+}
+
+.dash-header .header-inner {
+  min-height: 110px;
+  padding: 22px 34px 16px;
+  align-items: flex-start;
+}
+
+.dash-brand {
+  gap: 3px;
+}
+
+.dash-eyebrow {
+  font-size: 1.02rem;
+  line-height: 1.1;
+}
+
+.dash-biz {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.dash-header .header-actions {
+  gap: 16px;
+  padding-top: 22px;
+}
+
+.dash-signout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--fg-muted);
+  font-size: 1.05rem;
+}
+
+.dash-controls {
+  padding: 14px 34px 16px;
+}
+
+.dash-controls .theme-switch {
+  width: 348px;
+  background: #1c1c1c;
+  border-color: #575757;
+}
+
+.theme-switch button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+[data-theme="dark"] .theme-switch button.active {
+  background: #000000;
+}
+
+.dash-nav {
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 82px;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 2px 16px;
+  font-size: 1.42rem;
+  font-weight: 500;
+  border-bottom-width: 4px;
+}
+
+.dash-page {
+  padding: 28px 34px 60px;
+}
+
+.now-section {
+  border-color: var(--card-line);
+  border-radius: 23px;
+  padding: 38px 30px 28px;
+  margin-bottom: 28px;
+}
+
+.now-section .eyebrow {
+  font-size: 1.06rem;
+  letter-spacing: 0.06em;
+}
+
+.now-number {
+  margin: 23px 0 30px;
+}
+
+.now-detail {
+  font-size: 1.55rem;
+  font-weight: 500;
+}
+
+.now-side {
+  gap: 14px;
+  margin-top: 50px;
+}
+
+.now-side .btn {
+  min-height: 66px;
+  border-radius: 17px;
+  font-size: 1.24rem;
+  font-weight: 600;
+}
+
+.now-side .btn-secondary {
+  background: transparent;
+}
+
+.queue-section {
+  margin-top: 28px;
+}
+
+.queue-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.queue-row {
+  padding: 19px 29px;
+  border-color: var(--card-line);
+  border-radius: 21px;
+  margin-bottom: 24px;
+}
+
+.q-num {
+  font-size: 1.8rem;
+}
+
+.q-name {
+  font-size: 1.18rem;
+}
+
+.q-time {
+  font-size: 1.02rem;
+}
+
+.queue-row .row-actions {
+  gap: 16px;
+  margin-top: 17px;
+  padding-top: 16px;
+  border-top-color: var(--card-line);
+}
+
+.queue-row .row-actions .btn {
+  min-height: 57px;
+  border-radius: 16px;
+  font-size: 1.06rem;
+}
+
+.lang-button {
+  min-height: 36px;
+  padding: 7px 10px;
+  gap: 7px;
+  font-size: 0.9rem;
+}
+
+.flag-icon {
+  display: block;
+  width: 24px;
+  height: 18px;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 18%);
+}
+
+.lang-head h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lang-flag {
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  .dash-header .header-inner {
+    min-height: 104px;
+    padding: 22px 34px 13px;
+  }
+
+  .dash-biz {
+    font-size: 1.95rem;
+    max-width: 54vw;
+  }
+
+  .dash-header .header-actions {
+    padding-top: 20px;
+  }
+
+  .dash-header .lang-button {
+    display: none;
+  }
+
+  .dash-controls {
+    padding: 13px 34px 16px;
+  }
+
+  .dash-nav {
+    padding: 0 82px;
+  }
+
+  .nav-link {
+    font-size: 1.34rem;
+  }
+
+  .nav-link svg {
+    display: none;
+  }
+
+  .dash-page {
+    padding: 28px 34px 52px;
+  }
+
+  .now-section {
+    padding: 38px 30px 29px;
+  }
+
+  .now-side {
+    margin-top: 49px;
+  }
+
+  .queue-row {
+    padding: 19px 29px;
+  }
+
+  .queue-row .row-actions {
+    gap: 16px;
+  }
+
+  .queue-row .row-actions .btn {
+    padding: 12px 9px;
+  }
+}
+
+@media (max-width: 520px) {
+  .dash-header .header-inner,
+  .dash-controls,
+  .dash-page {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .dash-nav {
+    padding-left: 55px;
+    padding-right: 55px;
+  }
+
+  .nav-link {
+    font-size: 1.05rem;
+  }
+
+  .now-section,
+  .queue-row {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .queue-row .row-actions {
+    gap: 8px;
+  }
+
+  .queue-row .row-actions .btn {
+    font-size: 0.88rem;
+  }
 }

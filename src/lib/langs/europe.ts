@@ -886,10 +886,10 @@ const nl: Pack = {
 };
 
 export const westEurope: Lang[] = [
-  { code: "fr", label: "French", native: "Français", flag: "🇫🇷", dict: fr },
-  { code: "es", label: "Spanish", native: "Español", flag: "🇪🇸", dict: es },
-  { code: "pt", label: "Portuguese (Brazil)", native: "Português (Brasil)", flag: "🇧🇷", dict: pt },
-  { code: "de", label: "German", native: "Deutsch", flag: "🇩🇪", dict: de },
-  { code: "it", label: "Italian", native: "Italiano", flag: "🇮🇹", dict: it },
-  { code: "nl", label: "Dutch", native: "Nederlands", flag: "🇳🇱", dict: nl },
+  { code: "fr", label: "French", native: "Français", flag: "fr", dict: fr },
+  { code: "es", label: "Spanish", native: "Español", flag: "es", dict: es },
+  { code: "pt", label: "Portuguese (Brazil)", native: "Português (Brasil)", flag: "br", dict: pt },
+  { code: "de", label: "German", native: "Deutsch", flag: "de", dict: de },
+  { code: "it", label: "Italian", native: "Italiano", flag: "it", dict: it },
+  { code: "nl", label: "Dutch", native: "Nederlands", flag: "nl", dict: nl },
 ];

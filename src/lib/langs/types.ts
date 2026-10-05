@@ -7,7 +7,7 @@ export interface Lang {
   label: string;
   /** Name of the language in its own script. */
   native: string;
-  /** Country flag shown in the header. */
+  /** ISO 3166-1 alpha-2 country code for the flag icon. */
   flag: string;
   /** Writing direction, only set for right-to-left languages. */
   dir?: "rtl";
