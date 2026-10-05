@@ -11,7 +11,7 @@
     "dev": "concurrently -k -n api,web \"tsx watch server/index.ts\" \"vite\"",
     "dev:server": "tsx watch server/index.ts",
     "dev:client": "vite",
-    "build": "vite build && tsc -p tsconfig.server.json",
+    "build": "vite build && rm -rf dist-server node_modules/.tmp/tsconfig.server.tsbuildinfo && tsc -p tsconfig.server.json",
     "start": "node dist-server/index.js",
     "typecheck": "tsc -b --noEmit"
   },
