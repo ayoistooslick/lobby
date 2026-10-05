@@ -6,6 +6,7 @@ import { I18nProvider } from "./lib/i18n";
 import About from "./pages/About";
 import Auth from "./pages/Auth";
 import CustomerQueue from "./pages/CustomerQueue";
+import Display from "./pages/Display";
 import DashboardLayout from "./pages/DashboardLayout";
 import DashboardQr from "./pages/DashboardQr";
 import DashboardQueue from "./pages/DashboardQueue";
@@ -34,6 +35,7 @@ export default function App() {
           </Route>
 
           <Route path="/q/:slug" element={<CustomerQueue />} />
+          <Route path="/display/:slug" element={<Display />} />
         </Routes>
       </BrowserRouter>
       <LanguageGate />

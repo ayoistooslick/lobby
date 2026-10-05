@@ -32,7 +32,7 @@ export default function DashboardLayout() {
   }, []);
 
   useEffect(() => { refresh(); }, [refresh, attempt]);
-  useQueueStream(snapshot?.business.slug ?? null, refresh);
+  const connected = useQueueStream(snapshot?.business.slug ?? null, refresh);
 
   async function signOut() {
     try { await api("/api/auth/logout", { method: "POST" }); } catch { /* local navigation still signs out */ }
@@ -76,7 +76,10 @@ export default function DashboardLayout() {
         </nav>
       </header>
 
-      <main className="page dash-page"><Outlet context={{ snapshot, refresh }} /></main>
+      <main className="page dash-page">
+        {!connected && <div className="offline-banner" role="status">Connection interrupted. Showing the last known queue state while Lobby reconnects.</div>}
+        <Outlet context={{ snapshot, refresh }} />
+      </main>
     </div>
   );
 }

@@ -88,7 +88,7 @@ export default function CustomerQueue() {
     void refresh();
   }, [refresh]);
 
-  useQueueStream(slug || null, refresh);
+  const connected = useQueueStream(slug || null, refresh);
 
   const queue = snapshot?.queue ?? null;
   const ticket = snapshot?.ticket ?? null;
@@ -190,6 +190,7 @@ export default function CustomerQueue() {
         <h1>{queue.name}</h1>
         {queue.note && <p className="customer-note">{queue.note}</p>}
       </header>
+      {!connected && <div className="offline-banner" role="status">Connection interrupted. Showing the last known queue state while Lobby reconnects.</div>}
 
       {queue.paused && !ticket && (
         <div className="notice" role="status">

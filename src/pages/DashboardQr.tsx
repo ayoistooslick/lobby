@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
+import { MonitorPlay } from "lucide-react";
 import QRCode from "qrcode";
 import { useI18n } from "../lib/i18n";
 import { useDocumentTitle } from "../lib/hooks";
@@ -105,6 +106,10 @@ export default function DashboardQr() {
           <p className="hint" role="status">
             {copied ? t("qr.copied") : "\u00A0"}
           </p>
+          <Link className="display-link" to={`/display/${business.slug}`} target="_blank" rel="noreferrer">
+            <MonitorPlay size={18} aria-hidden="true" />
+            Open TV display
+          </Link>
           <p className="fine-print">{t("qr.fine")}</p>
         </div>
       </div>

@@ -39,6 +39,7 @@ export interface QueueSnapshot {
   queue: QueueInfo;
   nowServing: number | null;
   waitingCount: number;
+  nextWaiting: number[];
   ticket: CustomerTicket | null;
 }
 

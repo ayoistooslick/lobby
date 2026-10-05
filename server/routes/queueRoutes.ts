@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { publish, subscribe } from "../events";
-import { store, type BusinessRow } from "../store";
+import { store, today, type BusinessRow } from "../store";
 import { limit } from "../rateLimit";
 import { ApiError, isSlug, optionalText, QUEUE_NOT_FOUND } from "../validate";
 import { queueView, ticketView } from "../views";
@@ -19,9 +19,10 @@ queueRouter.get("/:slug", limit("queue", 240, 60_000), async (req, res) => {
   const requested = typeof req.query.ticket === "string" ? req.query.ticket : "";
   const ticket = requested ? await store.getTicket(requested, business.id) : undefined;
 
-  const [nowServing, waiting, view] = await Promise.all([
+  const [nowServing, waiting, tickets, view] = await Promise.all([
     store.currentNumber(business.id),
     store.waitingCount(business.id),
+    store.listTickets(business.id, today()),
     ticket ? ticketView(ticket) : Promise.resolve(null),
   ]);
 
@@ -30,6 +31,7 @@ queueRouter.get("/:slug", limit("queue", 240, 60_000), async (req, res) => {
     queue: queueView(business),
     nowServing,
     waitingCount: waiting,
+    nextWaiting: tickets.filter((item) => item.status === "waiting").slice(0, 3).map((item) => item.number),
     ticket: view,
   });
 });
