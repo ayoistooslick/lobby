@@ -307,7 +307,7 @@ export default function CustomerQueue() {
                 {services.map((entry) => (
                   <option key={entry.id} value={entry.slug}>
                     {entry.name}
-                    {entry.description ? ` — ${entry.description}` : ""}
+                    {entry.description ? `, ${entry.description}` : ""}
                   </option>
                 ))}
               </select>

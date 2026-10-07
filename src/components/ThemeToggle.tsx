@@ -1,35 +1,32 @@
 import { Moon, Sun } from "lucide-react";
 import { useState } from "react";
+import { useI18n } from "../lib/i18n";
 import { applyTheme, currentTheme, type Theme } from "../lib/theme";
 
+/** One icon in the header that flips between light and dark. */
 export default function ThemeToggle() {
+  const { t } = useI18n();
   const [theme, setTheme] = useState<Theme>(() => currentTheme());
 
-  function choose(next: Theme) {
+  function toggle() {
+    const next: Theme = theme === "light" ? "dark" : "light";
     applyTheme(next);
     setTheme(next);
   }
 
   return (
-    <div className="theme-switch" role="group" aria-label="Colour theme">
-      <button
-        type="button"
-        aria-pressed={theme === "light"}
-        className={theme === "light" ? "active" : ""}
-        onClick={() => choose("light")}
-      >
-        <Sun size={18} strokeWidth={1.9} aria-hidden="true" />
-        <span>Light</span>
-      </button>
-      <button
-        type="button"
-        aria-pressed={theme === "dark"}
-        className={theme === "dark" ? "active" : ""}
-        onClick={() => choose("dark")}
-      >
-        <Moon size={18} strokeWidth={1.9} aria-hidden="true" />
-        <span>Dark</span>
-      </button>
-    </div>
+    <button
+      type="button"
+      className="icon-btn theme-toggle"
+      aria-label={t("theme.toggle")}
+      title={t("theme.toggle")}
+      onClick={toggle}
+    >
+      {theme === "light" ? (
+        <Sun size={17} strokeWidth={1.8} aria-hidden="true" />
+      ) : (
+        <Moon size={17} strokeWidth={1.8} aria-hidden="true" />
+      )}
+    </button>
   );
 }

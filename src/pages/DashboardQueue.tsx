@@ -364,7 +364,7 @@ export default function DashboardQueue() {
           <div>
             <span className="k">{t("dash.avgWait", { n: "" }).trim().replace(/[:\s]*$/, "")}</span>
             <span className="v">
-              {queue.averageWaitMinutes ? t("common.minutes", { n: queue.averageWaitMinutes }) : "—"}
+              {queue.averageWaitMinutes ? t("common.minutes", { n: queue.averageWaitMinutes }) : t("common.noneYet")}
             </span>
           </div>
           <div>

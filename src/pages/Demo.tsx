@@ -128,7 +128,7 @@ export default function Demo() {
             <div className="phone-body">
               <p className="stat-inline">
                 {t("demo.nowServing")}{" "}
-                <strong>{selected?.nowServing ? selected.nowServing.label : "—"}</strong>
+                <strong>{selected?.nowServing ? selected.nowServing.label : t("common.noneYet")}</strong>
                 <span className="dot" aria-hidden="true">
                   ·
                 </span>
@@ -143,7 +143,7 @@ export default function Demo() {
                   </p>
                 </div>
               ) : (
-                <p className="muted">{t("cust.youreNumber")} —</p>
+                <p className="muted">{t("cust.joinReassure")}</p>
               )}
 
               <div className="field">
@@ -168,7 +168,7 @@ export default function Demo() {
             <div className="demo-service" key={card.service.id}>
               <p className="card-title">{card.service.name}</p>
               <p className="muted">
-                {t("demo.nowServing")} {card.nowServing ? card.nowServing.label : "—"} ·{" "}
+                {t("demo.nowServing")} {card.nowServing ? card.nowServing.label : t("common.noneYet")} ·{" "}
                 {t("cust.waitingN", { n: card.waitingCount })}
               </p>
               <div className="row-actions">
@@ -209,7 +209,7 @@ export default function Demo() {
           <h2>{t("demo.paneTv")}</h2>
           <div className="tv-frame">
             <p className="muted">{data.business.name}</p>
-            <p className="display-number">{selected?.nowServing?.label ?? "—"}</p>
+            <p className="display-number">{selected?.nowServing?.label ?? t("common.noneYet")}</p>
             <p className="eyebrow">{t("disp.nowServing")}</p>
             <div className="display-list inline">
               {selected?.waiting.slice(0, 8).map((ticket) => (

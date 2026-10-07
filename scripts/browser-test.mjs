@@ -273,8 +273,9 @@ async function main() {
   const tv = await displayPage.newPage();
   watch(tv, "tv");
   await tv.goto(displayLink, { waitUntil: "domcontentloaded" });
-  await tv.waitForSelector(".tvnow-num", { timeout: 15_000 });
-  check("the display shows a now-serving number", (await tv.locator(".tvnow-num").textContent())?.length > 0);
+  // With nobody at the counter the display shows the awaiting line instead of a number.
+  await tv.waitForSelector(".tvnow-num, .tvnow-wait", { timeout: 15_000 });
+  check("the display shows the now-serving area", (await tv.locator(".tvnow-num, .tvnow-wait").count()) === 1);
   check("the display lists the waiting queue", (await tv.locator(".tvnext li, .tv-grid, .tvgrid").count()) > 0);
   check("the display has a full-screen button", (await tv.locator(".display-top .icon-btn").count()) === 1);
 
@@ -282,10 +283,13 @@ async function main() {
   await page.bringToFront();
   await page.goto(`${BASE}/dashboard`, { waitUntil: "domcontentloaded" });
   await page.waitForSelector(".serve-side .btn-primary", { timeout: 15_000 });
-  const before = await tv.locator(".tvnow-num").textContent();
+  const before = await tv.locator(".tvnow-num, .tvnow-wait").textContent();
   await page.click(".serve-side .btn-primary");
   await tv.waitForFunction(
-    (previous) => document.querySelector(".tvnow-num")?.textContent?.trim() !== previous,
+    (previous) => {
+      const el = document.querySelector(".tvnow-num") ?? document.querySelector(".tvnow-wait");
+      return (el?.textContent ?? "").trim() !== previous;
+    },
     before,
     { timeout: 15_000 }
   );

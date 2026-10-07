@@ -468,14 +468,6 @@ button {
   gap: 9px;
 }
 
-.wordmark::before {
-  content: "";
-  width: 11px;
-  height: 11px;
-  border-radius: 3px;
-  background: var(--fg);
-}
-
 .site-nav {
   display: flex;
   gap: 4px;
@@ -2297,6 +2289,13 @@ input::placeholder {
   font-variant-numeric: tabular-nums;
 }
 
+.tvnow-wait {
+  font-size: clamp(1.6rem, 4.5vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: color-mix(in srgb, currentColor 62%, transparent);
+}
+
 .tvnow-side {
   background: var(--surface);
   border: 1px solid var(--card-line);
@@ -2725,38 +2724,74 @@ input::placeholder {
 }
 
 .lang-button {
-  display: inline-flex;
+  padding: 7px;
+}
+
+.lang-search {
+  display: flex;
   align-items: center;
-  gap: 7px;
-  background: none;
-  border: 1px solid transparent;
+  gap: 8px;
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
-  padding: 7px 10px;
-  font-weight: 500;
-  font-size: 0.9rem;
+  padding: 9px 12px;
+  margin-bottom: 12px;
+  background: var(--bg);
   color: var(--fg-muted);
 }
 
-.lang-button:hover {
-  background: var(--raised);
-  color: var(--fg);
+.lang-search:focus-within {
+  border-color: var(--fg);
 }
 
-.lang-card button.lang-choice,
-.lang-choice {
+.lang-search input {
+  border: 0;
+  background: none;
+  outline: none;
+  width: 100%;
+  font: inherit;
+  color: var(--fg);
+  min-width: 0;
+}
+
+.lang-search input::placeholder {
+  color: var(--fg-muted);
+}
+
+.lang-option {
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
   text-align: left;
   background: var(--surface);
-  border: 1px solid var(--card-line);
+  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
+  cursor: pointer;
+  font: inherit;
+  color: var(--fg);
 }
 
-.lang-choice:hover {
+.lang-option:hover {
   border-color: var(--fg);
+  background: var(--raised);
+}
+
+.lang-option.active {
+  border-color: var(--fg);
+  background: var(--raised);
+}
+
+.lang-option .lang-names {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.lang-check {
+  flex-shrink: 0;
+  color: var(--fg);
 }
 
 .flag-icon {
@@ -2769,13 +2804,13 @@ input::placeholder {
 }
 
 .lang-head h2 {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
 }
 
 .lang-native {
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .lang-names,
@@ -2785,12 +2820,9 @@ input::placeholder {
 }
 
 .lang-label {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 500;
   color: var(--fg-muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin: 14px 0 8px;
 }
 
 .lang-head {
@@ -2798,17 +2830,35 @@ input::placeholder {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  margin-bottom: 14px;
+}
+
+.lang-empty {
+  color: var(--fg-muted);
+  padding: 10px 2px;
 }
 
 .lang-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  background: rgb(0 0 0 / 0.38);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 110;
 }
 
-.theme-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.lang-overlay .lang-card {
+  width: min(100%, 420px);
+  padding: 20px;
+  box-shadow: var(--shadow-2);
+}
+
+.lang-overlay .lang-grid {
+  grid-template-columns: 1fr;
+  max-height: min(56dvh, 420px);
+  overflow-y: auto;
+  padding-right: 2px;
 }
 
 /* ----------------------------------------------------------------

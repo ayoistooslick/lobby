@@ -1,5 +1,5 @@
-import { Globe2, Languages } from "lucide-react";
-import { useState } from "react";
+import { Check, Globe2, Search, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { LANGS } from "../lib/langs";
 import { useI18n } from "../lib/i18n";
 
@@ -17,29 +17,55 @@ export function FlagIcon({ code, label }: { code: string; label?: string }) {
 }
 
 function LanguageOptions({ onClose }: { onClose?: () => void }) {
-  const { lang, choose } = useI18n();
+  const { lang, choose, t } = useI18n();
+  const [query, setQuery] = useState("");
+
+  const matches = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return LANGS;
+    return LANGS.filter((entry) =>
+      [entry.native, entry.label, entry.code].some((field) => field.toLowerCase().includes(needle))
+    );
+  }, [query]);
+
   return (
-    <div className="lang-grid">
-      {LANGS.map((entry) => (
-        <button
-          key={entry.code}
-          type="button"
-          className={entry.code === lang.code ? "lang-option active" : "lang-option"}
-          data-code={entry.code}
-          aria-pressed={entry.code === lang.code}
-          onClick={() => {
-            choose(entry.code);
-            onClose?.();
-          }}
-        >
-          <FlagIcon code={entry.flag} label={entry.label} />
-          <span className="lang-names">
-            <span className="lang-native">{entry.native}</span>
-            <span className="lang-label">{entry.label}</span>
-          </span>
-        </button>
-      ))}
-    </div>
+    <>
+      <label className="lang-search">
+        <Search size={15} strokeWidth={1.8} aria-hidden="true" />
+        <input
+          type="text"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={t("lang.search")}
+          aria-label={t("lang.search")}
+          enterKeyHint="search"
+          autoComplete="off"
+        />
+      </label>
+      <div className="lang-grid">
+        {matches.map((entry) => (
+          <button
+            key={entry.code}
+            type="button"
+            className={entry.code === lang.code ? "lang-option active" : "lang-option"}
+            data-code={entry.code}
+            aria-pressed={entry.code === lang.code}
+            onClick={() => {
+              choose(entry.code);
+              onClose?.();
+            }}
+          >
+            <FlagIcon code={entry.flag} label={entry.label} />
+            <span className="lang-names">
+              <span className="lang-native">{entry.native}</span>
+              <span className="lang-label">{entry.label}</span>
+            </span>
+            {entry.code === lang.code && <Check className="lang-check" size={16} aria-hidden="true" />}
+          </button>
+        ))}
+        {matches.length === 0 && <p className="lang-empty">{t("lang.noMatch")}</p>}
+      </div>
+    </>
   );
 }
 
@@ -59,29 +85,52 @@ export function LanguageGate() {
   );
 }
 
-// The picked language's flag, top right of every header.
+// One globe icon in the header; it opens the language picker.
 export function LangButton() {
-  const { lang, t } = useI18n();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
     <>
       <button
         type="button"
-        className="lang-button"
+        className="icon-btn lang-button"
         aria-label={t("lang.change")}
         title={t("lang.change")}
         onClick={() => setOpen(true)}
       >
-        <FlagIcon code={lang.flag} />
-        <Globe2 size={15} strokeWidth={1.8} aria-hidden="true" />
+        <Globe2 size={17} strokeWidth={1.8} aria-hidden="true" />
       </button>
       {open && (
-        <div className="lang-overlay" role="dialog" aria-modal="true" aria-label={t("lang.change")}>
+        <div
+          className="lang-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("lang.change")}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) setOpen(false);
+          }}
+        >
           <div className="lang-card">
             <div className="lang-head">
-              <h2><Languages size={19} aria-hidden="true" /> {t("lang.change")}</h2>
-              <button type="button" className="link-button" onClick={() => setOpen(false)}>
-                {t("lang.done")}
+              <h2>{t("lang.change")}</h2>
+              <button
+                type="button"
+                className="icon-btn"
+                aria-label={t("lang.close")}
+                title={t("lang.close")}
+                onClick={() => setOpen(false)}
+              >
+                <X size={16} strokeWidth={1.9} aria-hidden="true" />
               </button>
             </div>
             <LanguageOptions onClose={() => setOpen(false)} />

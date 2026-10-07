@@ -246,7 +246,7 @@ export default function DashboardTeam() {
         </form>
         {data.roles.map((role) => (
           <p className="hint" key={role.key}>
-            <strong>{role.label}</strong> — {role.help}
+            <strong>{role.label}</strong>, {role.help}
           </p>
         ))}
       </section>

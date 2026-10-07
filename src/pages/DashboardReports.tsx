@@ -115,7 +115,7 @@ export default function DashboardReports() {
           </div>
           <div className="stat-card">
             <p className="stat-label">{t("rep.peak")}</p>
-            <p className="stat-value">{peak === null ? "—" : `${String(peak).padStart(2, "0")}:00`}</p>
+            <p className="stat-value">{peak === null ? t("common.noneYet") : `${String(peak).padStart(2, "0")}:00`}</p>
           </div>
         </section>
       )}

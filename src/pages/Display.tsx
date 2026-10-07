@@ -51,7 +51,7 @@ export default function Display() {
     return () => window.clearInterval(timer);
   }, []);
 
-  useDocumentTitle(data ? `${data.business.name} — ${t("disp.nowServing")}` : "Lobby display");
+  useDocumentTitle(data ? `${data.business.name}, ${t("disp.nowServing")}` : "Lobby display");
 
   useEffect(() => {
     if (!data) return;
@@ -144,8 +144,11 @@ export default function Display() {
       <section className="tvnow">
         <div className="tv-card">
           <p className="eyebrow">{t("disp.nowServing")}</p>
-          <p className="tvnow-num">{data.nowServing ?? "—"}</p>
-          {data.nowServing ? null : <p className="eyebrow">{t("disp.awaiting")}</p>}
+          {data.nowServing ? (
+            <p className="tvnow-num">{data.nowServing}</p>
+          ) : (
+            <p className="tvnow-wait">{t("disp.awaiting")}</p>
+          )}
           {data.called.length > 0 && (
             <ul className="display-list">
               {data.called
@@ -182,7 +185,7 @@ export default function Display() {
             {data.others.map((entry) => (
               <div className="tvcard" key={entry.service.id}>
                 <span className="name">{entry.service.name}</span>
-                <span className="num">{entry.nowServing ?? "—"}</span>
+                <span className="num">{entry.nowServing ?? t("common.noneYet")}</span>
                 <span className="wait">{t("cust.waitingN", { n: entry.waiting })}</span>
               </div>
             ))}
