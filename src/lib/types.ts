@@ -175,6 +175,8 @@ export interface CustomerPayload {
   nowServing: string | null;
   nowServingNumber: number | null;
   peopleWaiting: number;
+  /** The next few numbers in line, so a stale page can still show the order. */
+  nextWaiting: number[];
   estimatedWaitMinutes: number;
   ticket: CustomerTicket | null;
 }

@@ -78,6 +78,7 @@ queueRouter.get("/:slug", limit("queue-read", 300, 60_000), async (req, res) => 
     nowServing: snapshot?.nowServing ? `${snapshot.nowServing.prefix || ""}${snapshot.nowServing.number}` : null,
     nowServingNumber: snapshot?.nowServing?.number ?? null,
     peopleWaiting: snapshot?.waitingCount ?? 0,
+    nextWaiting: (snapshot?.waiting ?? []).slice(0, 3).map((ticket) => ticket.number),
     estimatedWaitMinutes: snapshot?.estimatedWaitMinutes ?? 0,
     ticket: ticket ? customerTicketView(ticket, await store.peopleAhead(ticket)) : null,
   });

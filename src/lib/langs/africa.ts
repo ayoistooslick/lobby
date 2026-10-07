@@ -1772,9 +1772,9 @@ const sw: Pack = {
 };
 
 export const africa: Lang[] = [
-  { code: "pcm", label: "Nigerian Pidgin English", native: "Naijá Pidgin", flag: "🇳🇬", dict: pcm },
-  { code: "yo", label: "Yoruba", native: "Yorùbá", flag: "🇳🇬", dict: yo },
-  { code: "ha", label: "Hausa", native: "Hausa", flag: "🇳🇬", dict: ha },
-  { code: "ig", label: "Igbo", native: "Igbo", flag: "🇳🇬", dict: ig },
-  { code: "sw", label: "Swahili", native: "Kiswahili", flag: "🇰🇪", dict: sw },
+  { code: "pcm", label: "Nigerian Pidgin English", native: "Naijá Pidgin", flag: "ng", dict: pcm },
+  { code: "yo", label: "Yoruba", native: "Yorùbá", flag: "ng", dict: yo },
+  { code: "ha", label: "Hausa", native: "Hausa", flag: "ng", dict: ha },
+  { code: "ig", label: "Igbo", native: "Igbo", flag: "ng", dict: ig },
+  { code: "sw", label: "Swahili", native: "Kiswahili", flag: "ke", dict: sw },
 ];

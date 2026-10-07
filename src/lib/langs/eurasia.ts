@@ -1066,7 +1066,7 @@ const ar: Pack = {
 };
 
 export const eurasia: Lang[] = [
-  { code: "ru", label: "Russian", native: "Русский", flag: "🇷🇺", dict: ru },
-  { code: "tr", label: "Turkish", native: "Türkçe", flag: "🇹🇷", dict: tr },
-  { code: "ar", label: "Arabic", native: "العربية", flag: "🇸🇦", dir: "rtl", dict: ar },
+  { code: "ru", label: "Russian", native: "Русский", flag: "ru", dict: ru },
+  { code: "tr", label: "Turkish", native: "Türkçe", flag: "tr", dict: tr },
+  { code: "ar", label: "Arabic", native: "العربية", flag: "sa", dir: "rtl", dict: ar },
 ];

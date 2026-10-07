@@ -2759,8 +2759,19 @@ input::placeholder {
   border-color: var(--fg);
 }
 
-.lang-flag {
-  font-size: 1.05rem;
+.flag-icon {
+  display: block;
+  width: 24px;
+  height: 18px;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 18%);
+}
+
+.lang-head h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .lang-native {

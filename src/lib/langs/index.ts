@@ -9,7 +9,7 @@ export type { Lang } from "./types";
 
 // First entry is the fallback before a visitor picks a language.
 export const LANGS: Lang[] = [
-  { code: "en", label: "English", native: "English", flag: "🇬🇧", dict: en },
+  { code: "en", label: "English", native: "English", flag: "gb", dict: en },
   ...africa,
   ...westEurope,
   ...eurasia,

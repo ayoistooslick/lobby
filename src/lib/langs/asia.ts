@@ -1764,9 +1764,9 @@ const ko: Pack = {
 };
 
 export const asia: Lang[] = [
-  { code: "hi", label: "Hindi", native: "हिन्दी", flag: "🇮🇳", dict: hi },
-  { code: "id", label: "Indonesian", native: "Bahasa Indonesia", flag: "🇮🇩", dict: id },
-  { code: "zh", label: "Chinese (Simplified)", native: "简体中文", flag: "🇨🇳", dict: zh },
-  { code: "ja", label: "Japanese", native: "日本語", flag: "🇯🇵", dict: ja },
-  { code: "ko", label: "Korean", native: "한국어", flag: "🇰🇷", dict: ko },
+  { code: "hi", label: "Hindi", native: "हिन्दी", flag: "in", dict: hi },
+  { code: "id", label: "Indonesian", native: "Bahasa Indonesia", flag: "id", dict: id },
+  { code: "zh", label: "Chinese (Simplified)", native: "简体中文", flag: "cn", dict: zh },
+  { code: "ja", label: "Japanese", native: "日本語", flag: "jp", dict: ja },
+  { code: "ko", label: "Korean", native: "한국어", flag: "kr", dict: ko },
 ];
