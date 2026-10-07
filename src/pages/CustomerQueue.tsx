@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { api, messageOf } from "../lib/api";
 import { useI18n } from "../lib/i18n";
-import { useDocumentTitle, useQueueStream } from "../lib/hooks";
-import type { CustomerTicket, QueueSnapshot } from "../lib/types";
+import { useDeviceToken, useDocumentTitle, useStoredValue, useStream } from "../lib/hooks";
+import { applyBrand, clearBrand } from "../lib/theme";
+import type { CustomerPayload, CustomerTicket } from "../lib/types";
 import { ErrorState, LoadingState } from "../components/states";
 import { LangButton } from "../components/Language";
 
@@ -57,21 +58,33 @@ function LeaveIcon() {
 export default function CustomerQueue() {
   const { slug = "" } = useParams();
   const { t } = useI18n();
+  const [params, setParams] = useSearchParams();
 
-  const [snapshot, setSnapshot] = useState<QueueSnapshot | null>(null);
+  const [branchSlug, setBranchSlug] = useStoredValue(`lobby.branch.${slug}`, params.get("branch") ?? "");
+  const [serviceSlug, setServiceSlug] = useStoredValue(`lobby.service.${slug}`, params.get("service") ?? "");
+  const [snapshot, setSnapshot] = useState<CustomerPayload | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
-  const [ticketId, setTicketId] = useState<string | null>(() => readStoredId(slug));
+  const [ticketId, setTicketId] = useState<string | null>(
+    () => params.get("t") || readStoredId(slug)
+  );
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const deviceToken = useDeviceToken(slug);
 
   const refresh = useCallback(async () => {
+    if (!slug) return;
     try {
-      const query = ticketId ? `?ticket=${encodeURIComponent(ticketId)}` : "";
-      const data = await api<QueueSnapshot>(`/api/queue/${encodeURIComponent(slug)}${query}`);
+      const query = new URLSearchParams();
+      if (branchSlug) query.set("branch", branchSlug);
+      if (serviceSlug) query.set("service", serviceSlug);
+      if (ticketId) query.set("ticket", ticketId);
+      const data = await api<CustomerPayload>(
+        `/api/queue/${encodeURIComponent(slug)}?${query.toString()}`
+      );
       if (ticketId && !data.ticket) {
-        // The saved number is gone, so start fresh.
         clearId(slug);
         setTicketId(null);
       }
@@ -82,26 +95,38 @@ export default function CustomerQueue() {
     } finally {
       setReady(true);
     }
-  }, [slug, ticketId]);
+  }, [slug, branchSlug, serviceSlug, ticketId]);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
-  useQueueStream(slug || null, refresh);
+  const service = snapshot?.service ?? null;
+  const connection = useStream(
+    service ? `/api/queue/${encodeURIComponent(slug)}/stream?channel=service%3A${service.id}` : null,
+    () => void refresh()
+  );
 
-  const queue = snapshot?.queue ?? null;
+  // Keep the link shareable: the number survives a refresh or a reopened tab.
+  useEffect(() => {
+    if (!ticketId) return;
+    const next = new URLSearchParams();
+    next.set("t", ticketId);
+    if (branchSlug) next.set("branch", branchSlug);
+    if (serviceSlug) next.set("service", serviceSlug);
+    setParams(next, { replace: true });
+  }, [ticketId, branchSlug, serviceSlug, setParams]);
+
+  const queue = snapshot?.business ?? null;
   const ticket = snapshot?.ticket ?? null;
-  const nowServing = snapshot?.nowServing ?? null;
-  const waitingCount = snapshot?.waitingCount ?? 0;
 
   useDocumentTitle(
     !queue
       ? "Lobby"
       : ticket?.status === "called"
-        ? `It's your turn, ${queue.name}`
+        ? `${t("cust.turnT")}, ${queue.name}`
         : ticket
-          ? `You're number ${ticket.number}, ${queue.name}`
+          ? `${t("cust.youreNumber")} ${ticket.label}, ${queue.name}`
           : `${queue.name}, Lobby`
   );
 
@@ -111,6 +136,13 @@ export default function CustomerQueue() {
     if (typeof navigator.vibrate === "function") navigator.vibrate([180, 90, 180]);
   }, [status]);
 
+  // The brand colours travel with the shop, so the page looks like the business.
+  useEffect(() => {
+    if (!snapshot) return;
+    applyBrand(snapshot.business.brandColor, snapshot.business.brandAccent);
+    return () => clearBrand();
+  }, [snapshot]);
+
   async function join(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
@@ -118,10 +150,17 @@ export default function CustomerQueue() {
     try {
       const data = await api<{ ticket: CustomerTicket }>(`/api/queue/${encodeURIComponent(slug)}/join`, {
         method: "POST",
-        body: { name },
+        body: {
+          branchSlug: snapshot?.branch?.slug ?? branchSlug,
+          serviceSlug: snapshot?.service?.slug ?? serviceSlug,
+          name,
+          phone,
+          deviceToken,
+        },
       });
       storeId(slug, data.ticket.id);
       setTicketId(data.ticket.id);
+      await refresh();
     } catch (err) {
       setActionError(messageOf(err));
     } finally {
@@ -176,18 +215,33 @@ export default function CustomerQueue() {
     return <ErrorState message={loadError ?? t("cust.wrong")} onRetry={() => void refresh()} />;
   }
 
+  const services = snapshot.services;
+  const needsChoice = !ticket && services.length > 1 && !snapshot.service;
+
   return (
     <main className="customer-page">
       <div className="customer-top">
         <p className="customer-brand">
+          {snapshot.business.logo ? (
+            <img className="customer-logo" src={snapshot.business.logo} alt="" width={28} height={28} />
+          ) : null}
           <Link to="/" className="link-button">
             Lobby
           </Link>
         </p>
-        <LangButton />
+        <div className="header-actions">
+          {connection !== "live" && (
+            <span className="conn conn-warn" role="status">
+              {connection === "offline" ? t("common.offline") : t("common.reconnecting")}
+            </span>
+          )}
+          <LangButton />
+        </div>
       </div>
+
       <header className="customer-head">
         <h1>{queue.name}</h1>
+        {snapshot.branch && <p className="muted">{snapshot.branch.name}</p>}
         {queue.note && <p className="customer-note">{queue.note}</p>}
       </header>
 
@@ -197,12 +251,12 @@ export default function CustomerQueue() {
         </div>
       )}
 
-      {!ticket && snapshot && (
+      {!ticket && !needsChoice && (
         <section className="ticket-panel join-panel">
           <p className="stat-inline">
-            {nowServing !== null ? (
+            {snapshot.nowServing ? (
               <>
-                {t("demo.nowServing")} <strong>#{nowServing}</strong>
+                {t("demo.nowServing")} <strong>{snapshot.nowServing}</strong>
               </>
             ) : (
               t("cust.nobody")
@@ -210,10 +264,57 @@ export default function CustomerQueue() {
             <span className="dot" aria-hidden="true">
               ·
             </span>
-            {waitingCount === 0 ? t("cust.noOneWaiting") : t("cust.waitingN", { n: waitingCount })}
+            {snapshot.peopleWaiting === 0 ? t("cust.noOneWaiting") : t("cust.waitingN", { n: snapshot.peopleWaiting })}
+            {snapshot.estimatedWaitMinutes > 0 && (
+              <>
+                <span className="dot" aria-hidden="true">
+                  ·
+                </span>
+                {t("cust.estWait", { n: snapshot.estimatedWaitMinutes })}
+              </>
+            )}
           </p>
 
-          {!queue.paused && (
+          {snapshot.branches && snapshot.branches.length > 1 && (
+            <div className="field">
+              <label htmlFor="branch-pick">{t("cust.pickBranch")}</label>
+              <select
+                id="branch-pick"
+                value={snapshot.branch?.slug ?? ""}
+                onChange={(event) => {
+                  setBranchSlug(event.target.value);
+                  setServiceSlug("");
+                }}
+              >
+                {snapshot.branches.map((branch) => (
+                  <option key={branch.id} value={branch.slug}>
+                    {branch.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {services.length > 1 && (
+            <div className="field">
+              <label htmlFor="service-pick">{t("cust.pickQueue")}</label>
+              <select
+                id="service-pick"
+                value={snapshot.service?.slug ?? ""}
+                onChange={(event) => setServiceSlug(event.target.value)}
+              >
+                <option value="">{t("cust.pickQueueHint")}</option>
+                {services.map((entry) => (
+                  <option key={entry.id} value={entry.slug}>
+                    {entry.name}
+                    {entry.description ? ` — ${entry.description}` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {!queue.paused && snapshot.service && (
             <form onSubmit={join}>
               <h2>{t("cust.joinT")}</h2>
               <div className="field">
@@ -226,6 +327,17 @@ export default function CustomerQueue() {
                   placeholder="e.g. Ada"
                   autoComplete="given-name"
                   enterKeyHint="go"
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="join-phone">{t("cust.phoneLabel")}</label>
+                <input
+                  id="join-phone"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  maxLength={32}
+                  inputMode="tel"
+                  autoComplete="tel"
                 />
               </div>
               {actionError && (
@@ -245,7 +357,7 @@ export default function CustomerQueue() {
       {ticket && ticket.status === "waiting" && (
         <section className="cust-stack" aria-live="polite">
           <div className={`ticket-hero${ticket.peopleAhead === 0 ? " is-next" : ""}`}>
-            <p className="ticket-number">#{ticket.number}</p>
+            <p className="ticket-number">{ticket.label}</p>
             <p className="ticket-ahead">
               {ticket.peopleAhead === 0
                 ? t("cust.youreNext")
@@ -258,14 +370,21 @@ export default function CustomerQueue() {
           <div className="stat-card">
             <p className="stat-label">{t("demo.nowServing")}</p>
             <p className="stat-value">
-              {nowServing !== null ? `#${nowServing}` : <span className="dash-mark is-sm" />}
+              {snapshot.nowServing ?? <span className="dash-mark is-sm" />}
             </p>
           </div>
 
           <div className="stat-card">
             <p className="stat-label">{t("cust.peopleWaiting")}</p>
-            <p className="stat-value">{waitingCount}</p>
+            <p className="stat-value">{snapshot.peopleWaiting}</p>
           </div>
+
+          {snapshot.estimatedWaitMinutes > 0 && (
+            <div className="stat-card">
+              <p className="stat-label">{t("cust.waitEstimate")}</p>
+              <p className="stat-value">{t("common.minutes", { n: snapshot.estimatedWaitMinutes })}</p>
+            </div>
+          )}
 
           <p className="reassure">
             <span className="reassure-dot" aria-hidden="true" />
@@ -278,22 +397,25 @@ export default function CustomerQueue() {
             </p>
           )}
 
-          <button
-            type="button"
-            className="btn btn-secondary leave-btn btn-block"
-            onClick={() => void leaveQueue()}
-            disabled={busy}
-          >
+          <button type="button" className="btn btn-secondary leave-btn btn-block" onClick={() => void leaveQueue()} disabled={busy}>
             <LeaveIcon />
             <span>{t("cust.leave")}</span>
           </button>
         </section>
       )}
 
+      {ticket && ticket.status === "on_hold" && (
+        <section className="ticket-panel is-turn" aria-live="polite">
+          <p className="eyebrow">{t("cust.held")}</p>
+          <p className="ticket-number">{ticket.label}</p>
+          <p className="ticket-ahead">{t("cust.heldBody")}</p>
+        </section>
+      )}
+
       {ticket && ticket.status === "called" && (
         <section className="ticket-panel is-turn" aria-live="assertive">
           <p className="eyebrow">{t("cust.turnT")}</p>
-          <p className="ticket-number">#{ticket.number}</p>
+          <p className="ticket-number">{ticket.label}</p>
           <p className="ticket-ahead">{t("cust.turnB")}</p>
           {!ticket.confirmed ? (
             <>
@@ -319,24 +441,36 @@ export default function CustomerQueue() {
         </section>
       )}
 
-      {ticket && (ticket.status === "served" || ticket.status === "skipped" || ticket.status === "no_show") && (
-        <section className="ticket-panel is-done">
-          <p className="eyebrow">
-            {ticket.status === "served" ? t("cust.done") : ticket.status === "skipped" ? t("dash.stSkipped") : t("dash.stNoShow")}
-          </p>
-          <p className="ticket-number">#{ticket.number}</p>
-          <p className="ticket-ahead">
-            {ticket.status === "served"
-              ? t("cust.servedBody")
-              : ticket.status === "skipped"
-                ? t("cust.skippedBody")
-                : t("cust.noShowBody")}
-          </p>
-          <button type="button" className="btn btn-primary btn-block" onClick={joinAgain}>
-            {t("cust.joinAgain")}
-          </button>
-        </section>
-      )}
+      {ticket &&
+        (ticket.status === "served" ||
+          ticket.status === "skipped" ||
+          ticket.status === "no_show" ||
+          ticket.status === "cancelled") && (
+          <section className="ticket-panel is-done">
+            <p className="eyebrow">
+              {ticket.status === "served"
+                ? t("cust.done")
+                : ticket.status === "cancelled"
+                  ? t("dash.stCancelled")
+                  : ticket.status === "skipped"
+                    ? t("dash.stSkipped")
+                    : t("dash.stNoShow")}
+            </p>
+            <p className="ticket-number">{ticket.label}</p>
+            <p className="ticket-ahead">
+              {ticket.status === "served"
+                ? t("cust.servedBody")
+                : ticket.status === "cancelled"
+                  ? t("cust.noShowBody")
+                  : ticket.status === "skipped"
+                    ? t("cust.skippedBody")
+                    : t("cust.noShowBody")}
+            </p>
+            <button type="button" className="btn btn-primary btn-block" onClick={joinAgain}>
+              {t("cust.joinAgain")}
+            </button>
+          </section>
+        )}
 
       <footer className="customer-foot">
         <p>

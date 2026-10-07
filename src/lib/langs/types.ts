@@ -11,5 +11,9 @@ export interface Lang {
   flag: string;
   /** Writing direction, only set for right-to-left languages. */
   dir?: "rtl";
-  dict: Record<StringKey, string>;
+  /**
+   * Translations. Packs may omit keys that were added after they were
+   * written; those fall back to the English string at lookup time.
+   */
+  dict: Partial<Record<StringKey, string>>;
 }

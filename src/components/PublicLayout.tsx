@@ -15,6 +15,7 @@ export default function PublicLayout() {
           </Link>
           <nav className="site-nav" aria-label="Main">
             <Link to="/about">{t("nav.about")}</Link>
+            <Link to="/demo">{t("nav.demo")}</Link>
           </nav>
           <div className="header-actions">
             <LangButton />
