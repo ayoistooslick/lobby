@@ -1,5 +1,6 @@
 import { Check, Globe2, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { LANGS } from "../lib/langs";
 import { useI18n } from "../lib/i18n";
 
@@ -110,33 +111,37 @@ export function LangButton() {
       >
         <Globe2 size={17} strokeWidth={1.8} aria-hidden="true" />
       </button>
-      {open && (
-        <div
-          className="lang-overlay"
-          role="dialog"
-          aria-modal="true"
-          aria-label={t("lang.change")}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) setOpen(false);
-          }}
-        >
-          <div className="lang-card">
-            <div className="lang-head">
-              <h2>{t("lang.change")}</h2>
-              <button
-                type="button"
-                className="icon-btn"
-                aria-label={t("lang.close")}
-                title={t("lang.close")}
-                onClick={() => setOpen(false)}
-              >
-                <X size={16} strokeWidth={1.9} aria-hidden="true" />
-              </button>
+      {open &&
+        // Portalled to <body>: the headers use backdrop-filter, which would
+        // otherwise trap the fixed overlay and pin the card to the top bar.
+        createPortal(
+          <div
+            className="lang-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("lang.change")}
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setOpen(false);
+            }}
+          >
+            <div className="lang-card">
+              <div className="lang-head">
+                <h2>{t("lang.change")}</h2>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  aria-label={t("lang.close")}
+                  title={t("lang.close")}
+                  onClick={() => setOpen(false)}
+                >
+                  <X size={16} strokeWidth={1.9} aria-hidden="true" />
+                </button>
+              </div>
+              <LanguageOptions onClose={() => setOpen(false)} />
             </div>
-            <LanguageOptions onClose={() => setOpen(false)} />
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }
