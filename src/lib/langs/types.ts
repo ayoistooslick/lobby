@@ -13,7 +13,7 @@ export interface Lang {
   dir?: "rtl";
   /**
    * Translations. Packs may omit keys that were added after they were
-   * written; those fall back to the English string at lookup time.
+   * written. Those fall back to the English string at lookup time.
    */
   dict: Partial<Record<StringKey, string>>;
 }

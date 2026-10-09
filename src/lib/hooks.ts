@@ -50,7 +50,7 @@ export function useStream(path: string | null, onChange: () => void, pollMs = 30
       source.onerror = () => {
         if (cancelled) return;
         setConnection(navigator.onLine ? "connecting" : "offline");
-        // EventSource retries by itself; this is only a safety net for
+        // EventSource retries by itself. This is only a safety net for
         // browsers that give up after a long outage.
         window.clearTimeout(retry);
         retry = window.setTimeout(open, 5_000);
@@ -126,7 +126,7 @@ export function useStoredValue(key: string, fallback = ""): [string, (value: str
     try {
       localStorage.setItem(key, next);
     } catch {
-      // Storage is optional; the choice lasts for this page only.
+      // Storage is optional. The choice lasts for this page only.
     }
   };
 

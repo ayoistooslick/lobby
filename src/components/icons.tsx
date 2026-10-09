@@ -2,7 +2,7 @@ import type { SVGProps } from "react";
 
 /**
  * A tiny hand-rolled icon set: 24px grid, 1.75px strokes, currentColor.
- * Every icon is presentational; screens provide their own labels.
+ * Every icon is presentational. Screens provide their own labels.
  */
 
 type IconProps = SVGProps<SVGSVGElement> & { size?: number };

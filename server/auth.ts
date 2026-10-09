@@ -64,7 +64,7 @@ export async function scopeForToken(token: string): Promise<AuthScope | null> {
   const staff = await store.staffForToken(hashToken(token), Date.now());
   if (!staff) return null;
   const business = await store.getBusinessById(staff.business_id);
-  // A paused business still lets its staff work; pausing only stops new joins.
+  // A paused business still lets its staff work. Pausing only stops new joins.
   if (!business) return null;
   return { staff, business };
 }

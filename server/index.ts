@@ -31,7 +31,7 @@ const CSP = [
 ].join("; ");
 
 async function main(): Promise<void> {
-  // Postgres schema lives on the managed database; SQLite lives on local disk.
+  // Postgres schema lives on the managed database. SQLite lives on local disk.
   await store.init();
   startSessionPruner();
 

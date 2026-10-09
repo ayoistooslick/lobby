@@ -18,8 +18,8 @@ function check(name, ok, extra = "") {
     pass += 1;
   } else {
     fail += 1;
-    failures.push(`${name}${extra ? ` — ${extra}` : ""}`);
-    console.log(`FAIL ${name}${extra ? ` — ${extra}` : ""}`);
+    failures.push(`${name}${extra ? `, ${extra}` : ""}`);
+    console.log(`FAIL ${name}${extra ? `, ${extra}` : ""}`);
   }
 }
 

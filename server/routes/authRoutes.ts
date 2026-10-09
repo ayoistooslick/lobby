@@ -161,7 +161,7 @@ authRouter.post("/invite/:token", limit("invite-accept", 10, 300_000), async (re
   const business = await store.getBusinessById(invite.business_id);
   if (!business) throw new ApiError(404, "This shop no longer exists.");
 
-  // Same email may work at another shop; only this business's team blocks it.
+  // Same email may work at another shop. Only this business's team blocks it.
   const existing = await store.getStaffInBusiness(invite.email, invite.business_id);
   if (existing) {
     throw new ApiError(409, "That email already has an account here. Sign in instead.");

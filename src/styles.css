@@ -1,7 +1,7 @@
 /* ================================================================
    Lobby design system
    Black and white, calm, high contrast. One radius language, one
-   spacing scale, one button shape — used the same way everywhere.
+   spacing scale, one button shape, used the same way everywhere.
    ================================================================ */
 
 /* Manrope, self-hosted (CSP only allows same-origin fonts). */
@@ -284,7 +284,7 @@
   --shadow-1: 0 1px 2px rgb(16 16 18 / 0.05);
   --shadow-2: 0 10px 30px -12px rgb(16 16 18 / 0.18);
 
-  /* Set per business by the settings screen; falls back to the neutral theme. */
+  /* Set per business by the settings screen, falls back to the neutral theme. */
   --brand: var(--btn-bg);
   --brand-fg: var(--btn-fg);
   --brand-accent: #f2b705;
@@ -1672,7 +1672,7 @@ input::placeholder {
   font-variant-numeric: tabular-nums;
 }
 
-/* Now serving — the dominant element */
+/* Now serving, the dominant element */
 .serve-card {
   border: 1px solid var(--fg);
   border-radius: var(--radius);
@@ -2164,7 +2164,13 @@ input::placeholder {
 }
 
 .leave-btn svg {
+  width: 18px;
+  height: 18px;
   flex: none;
+}
+
+.leave-btn span {
+  font-size: 0.95rem;
 }
 
 .leave-btn:hover {

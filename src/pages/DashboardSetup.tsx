@@ -52,7 +52,7 @@ export default function DashboardSetup() {
     api<{ templates: TemplateInfo[] }>("/api/auth/templates")
       .then((data) => setTemplates(data.templates))
       .catch(() => {
-        // Templates are a shortcut; the form below still works without them.
+        // Templates are a shortcut. The form below still works without them.
       });
   }, [canEdit, templates.length]);
 

@@ -2,7 +2,7 @@
  * Applies scripts/i18n-strings.mjs (+ parts) to the language packs.
  *
  * For each pack dictionary: a key is rewritten only when its current value is
- * still the English source (synced placeholder) or missing entirely — real
+ * still the English source (synced placeholder) or missing entirely, real
  * translations already in the packs are never touched.
  *
  * Usage: node scripts/apply-translations.mjs
@@ -50,7 +50,7 @@ for (const pack of PACKS) {
       } catch {
         return line;
       }
-      if (decoded !== en[key]) return line; // already translated — leave it
+      if (decoded !== en[key]) return line; // already translated, leave it
       if (tr === decoded) return line; // translation identical to English
       changed = true;
       packReplaced += 1;

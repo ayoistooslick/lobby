@@ -31,8 +31,8 @@ export interface DemoHandle {
 let handle: DemoHandle | null = null;
 
 export async function ensureDemo(): Promise<DemoHandle> {
-  // Older builds seeded the demo under a slug made from its display name;
-  // either record is the same shop, so adopt whichever exists.
+  // Older builds seeded the demo under a slug made from its display name.
+  // Either record is the same shop, so adopt whichever exists.
   const existing = (await store.getBusinessBySlug(DEMO_SLUG)) ?? (await store.getBusinessByEmail(DEMO_EMAIL));
   if (existing) {
     const branches = await store.listBranches(existing.id);
@@ -63,7 +63,7 @@ export async function ensureDemo(): Promise<DemoHandle> {
     });
   }
   await store.updateBusiness(business.id, {
-    customer_note: "Practice queue — have a go, then press Reset.",
+    customer_note: "Practice queue. Have a go, then press Reset.",
     brand_color: "#1f6feb",
     brand_accent: "#f2b705",
   });

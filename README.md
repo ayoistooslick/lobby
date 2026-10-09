@@ -74,7 +74,7 @@ Session tokens are random values created at login and stored server-side as hash
 | Variable        | Default            | Purpose                                                                 |
 | --------------- | ------------------ | ----------------------------------------------------------------------- |
 | `PORT`          | `3000`             | Port the HTTP server listens on (hosts like Render inject this)         |
-| `DATABASE_URL`  | unset              | PostgreSQL connection string. **When set, Lobby uses Postgres; when unset, it falls back to the SQLite file automatically** |
+| `DATABASE_URL`  | unset              | PostgreSQL connection string. **When set, Lobby uses Postgres. When unset, it falls back to the SQLite file automatically** |
 | `DATABASE_PATH` | `./data/lobby.db`  | SQLite file location (only used when `DATABASE_URL` is not set)         |
 | `NODE_ENV`      | unset              | Set to `production` in production so session cookies get the `Secure` flag |
 
@@ -82,12 +82,12 @@ Session tokens are random values created at login and stored server-side as hash
 
 Lobby supports two storage engines behind one interface:
 
-- **PostgreSQL** — set `DATABASE_URL`, e.g.
+- **PostgreSQL**. Set `DATABASE_URL`, e.g.
   `postgres://user:password@host:5432/dbname?sslmode=require`.
   Use this on any host without a persistent disk (Render, Railway, Fly, Koyeb…).
-  Tables are created on first boot; TLS is enabled automatically when the URL
+  Tables are created on first boot. TLS is enabled automatically when the URL
   asks for `sslmode=require`.
-- **SQLite (default)** — with no `DATABASE_URL`, data goes to a single file at
+- **SQLite (default)**. With no `DATABASE_URL`, data goes to a single file at
   `DATABASE_PATH`. Zero setup, perfect for local development.
 
 The active engine is printed at boot (`storage: PostgreSQL` / `storage: SQLite file`)
@@ -106,7 +106,7 @@ Browser (React SPA)                      Express server
 ```
 
 - **Screens stay fresh with SSE.** The server broadcasts a small `update` event whenever
-  a queue changes; each open screen refetches its own snapshot. No websockets, no
+  a queue changes. Each open screen refetches its own snapshot. No websockets, no
   third-party realtime service, and it survives normal mobile network hiccups
   (EventSource reconnects on its own).
 - **The server owns the state.** Positions, "now serving", and turn order are computed
@@ -128,13 +128,13 @@ Numbers restart each day and are unique per business per day.
 
 ### Security notes
 
-- Passwords hashed with scrypt; login errors are identical for unknown emails and wrong
+- Passwords hashed with scrypt. Login errors are identical for unknown emails and wrong
   passwords (and unknown emails still pay the hashing cost).
 - Session cookies are `httpOnly`, `SameSite=Lax`, `Secure` in production.
 - Every staff endpoint requires a session and only touches rows belonging to that
-  session's business; customers can only act on their own ticket, which is referenced by
+  session's business. Customers can only act on their own ticket, which is referenced by
   an unguessable id.
-- All input is validated on the server; mutations expect JSON (which blocks simple
+- All input is validated on the server. Mutations expect JSON (which blocks simple
   cross-site form attacks), and there are basic per-IP and per-queue rate limits.
 
 ## Project structure
@@ -194,10 +194,10 @@ Same shape as Render:
 - **Build:** `npm install && npm run build`
 - **Start:** `npm start`
 - **Env vars:** `NODE_ENV=production` and `DATABASE_URL`. No volume required.
-- `PORT` is injected by the platform; the server listens on it automatically.
+- `PORT` is injected by the platform. The server listens on it automatically.
 
 Prefer SQLite instead? Attach a persistent volume and set `DATABASE_PATH` to a file on
-that volume — then omit `DATABASE_URL` and the file engine takes over.
+that volume, then omit `DATABASE_URL` and the file engine takes over.
 
 ### A VPS (DigitalOcean, Hetzner, AWS EC2…)
 

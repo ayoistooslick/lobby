@@ -56,7 +56,7 @@ export function isSlug(value: string): boolean {
   return /^[a-z0-9-]{1,60}$/.test(value);
 }
 
-/** Public ids are UUIDs; anything else is rejected before it reaches SQL. */
+/** Public ids are UUIDs. Anything else is rejected before it reaches SQL. */
 export function id(value: unknown, label = "Reference"): string {
   const raw = text(value, { label, max: 64 });
   if (!/^[A-Za-z0-9_-]{4,64}$/.test(raw)) {
@@ -104,7 +104,7 @@ export function boolean(value: unknown, label: string): boolean {
   return value;
 }
 
-/** Staff tick a box or press a button; we never trust the raw value. */
+/** Staff tick a box or press a button. We never trust the raw value. */
 export function oneOf<T extends string>(value: unknown, options: readonly T[], label: string): T {
   const raw = optionalText(value, label, 40).toLowerCase();
   if (!options.includes(raw as T)) {

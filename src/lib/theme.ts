@@ -9,7 +9,7 @@ export function applyTheme(theme: Theme): void {
   try {
     localStorage.setItem("lobby.theme", theme);
   } catch {
-    // Storage can be unavailable in private browsing; the theme still applies.
+    // Storage can be unavailable in private browsing. The theme still applies.
   }
 }
 

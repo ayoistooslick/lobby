@@ -131,7 +131,7 @@ export class SqlStore {
    * Sessions stopped belonging to a business when staff became a table of
    * their own. A database that already gained the multi-queue tables never
    * re-enters migrateLegacySchema(), so the old NOT NULL rule on
-   * sessions.business_id — and any session column an old build is missing —
+   * sessions.business_id, and any session column an old build is missing,
    * is brought up to date here on every boot.
    */
   private async repairSessions(): Promise<void> {
@@ -267,7 +267,7 @@ export class SqlStore {
         }
       }
       await this.driver.run("ALTER TABLE tickets DROP CONSTRAINT IF EXISTS tickets_business_id_day_number_key");
-      // Old sessions were keyed by business; new ones key by staff member.
+      // Old sessions were keyed by business. New ones key by staff member.
       await this.driver.run("ALTER TABLE sessions ALTER COLUMN business_id DROP NOT NULL");
       await this.driver.run("UPDATE tickets SET source = 'qr' WHERE source IS NULL OR source = ''");
       return;
@@ -293,8 +293,8 @@ export class SqlStore {
     }
     const ticketsFrom = legacy.tickets;
     if (ticketsFrom) {
-      // Queue history is kept. The branch and service columns stay empty here;
-      // backfillDefaults() points every row at the branch it creates below.
+      // Queue history is kept. The branch and service columns stay empty here,
+      // and backfillDefaults() points every row at the branch it creates below.
       await this.driver.run(
         `INSERT INTO tickets (${TICKET_COLUMNS})
          SELECT id, business_id, '', '', '', day, number, '', name, '', status, confirmed, 'qr', '', '', 0, '',

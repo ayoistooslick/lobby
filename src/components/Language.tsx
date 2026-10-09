@@ -86,7 +86,7 @@ export function LanguageGate() {
   );
 }
 
-// One globe icon in the header; it opens the language picker.
+// One globe icon in the header. It opens the language picker.
 export function LangButton() {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);

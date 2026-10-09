@@ -28,8 +28,8 @@ function check(name, condition, detail = "") {
     passed += 1;
     console.log(`  ok   ${name}`);
   } else {
-    failures.push(`${name}${detail ? ` — ${detail}` : ""}`);
-    console.log(`  FAIL ${name}${detail ? ` — ${detail}` : ""}`);
+    failures.push(`${name}${detail ? `, ${detail}` : ""}`);
+    console.log(`  FAIL ${name}${detail ? `, ${detail}` : ""}`);
   }
 }
 
@@ -43,7 +43,7 @@ function watch(page, tag) {
   page.on("pageerror", (error) => consoleErrors.push(`${tag}: ${error.message}`));
 }
 
-/** The first visit asks for a language; choose English and move on. */
+/** The first visit asks for a language. Choose English and move on. */
 async function pickLanguage(page) {
   await page.waitForSelector(".lang-gate, .site-header, .customer-top", { timeout: 15_000 });
   if ((await page.locator(".lang-gate").count()) === 0) return;
@@ -313,7 +313,7 @@ async function main() {
 
   group("Signing out");
   await page.goto(`${BASE}/dashboard`, { waitUntil: "domcontentloaded" });
-  // Sign out lives in the sidebar (hidden on phones); wait for it to render,
+  // Sign out lives in the sidebar (hidden on phones). Wait for it to render,
   // then click via the DOM so the test stays viewport-independent.
   await page.waitForSelector('button[aria-label="Sign out"]', { state: "attached", timeout: 15_000 });
   await page.evaluate(() => {

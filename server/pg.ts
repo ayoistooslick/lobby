@@ -1,7 +1,7 @@
 import { Pool, types, type PoolClient } from "pg";
 import type { SqlDriver } from "./sql";
 
-// int8/bigint arrive as strings by default; every counter here fits a double.
+// int8/bigint arrive as strings by default. Every counter here fits a double.
 types.setTypeParser(types.builtins.INT8, (value) => Number(value));
 types.setTypeParser(types.builtins.NUMERIC, (value) => Number(value));
 
@@ -79,7 +79,7 @@ export class PgDriver implements SqlDriver {
       try {
         await client.query("ROLLBACK");
       } catch {
-        // The connection may already be broken; the caller still gets the error.
+        // The connection may already be broken. The caller still gets the error.
       }
       throw err;
     } finally {

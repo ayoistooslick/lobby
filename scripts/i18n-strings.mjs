@@ -1,7 +1,7 @@
 /**
  * Translations for UI strings that language packs still carry in English
  * (added by scripts/sync-lang.mjs or never translated). Applied by
- * scripts/apply-translations.mjs — values already translated in a pack are
+ * scripts/apply-translations.mjs, values already translated in a pack are
  * left untouched.
  *
  * Placeholders like {n}, {business}, {role} must be kept as-is.
@@ -155,25 +155,25 @@ export const T = {
     ig: "Anyị ga-awepụta ogige na window. Ị nwere ike ịgbanwe ọ bụla aha mgbe niile.",
   },
   "band.body": {
-    fr: "Choisissez un type de commerce — restaurant, clinique, salon, atelier — et modifiez les noms. Ajoutez d'autres sites quand vous ouvrez un nouveau.",
-    es: "Empieza con un tipo de negocio — restaurante, clínica, salón, taller — y edita los nombres. Añade más ubicaciones cuando abras otra.",
-    pt: "Comece por um tipo de negócio — restaurante, clínica, salão, oficina — e edite os nomes. Adicione mais localizações quando abrir outra.",
-    de: "Starten Sie mit einem Geschäftstyp — Restaurant, Klinik, Salon, Werkstatt — und ändern Sie die Namen. Fügen Sie weitere Standorte hinzu, wenn Sie einen neuen eröffnen.",
-    it: "Parti da un tipo di attività — ristorante, clinica, salone, officina — e modifica i nomi. Aggiungi altre sedi quando ne apri una nuova.",
-    nl: "Begin met een soort bedrijf — restaurant, kliniek, salon, werkplaats — en pas de namen aan. Voeg meer locaties toe zodra je er een opent.",
-    ru: "Начните с типа бизнеса — ресторан, клиника, салон, мастерская — и переименуйте, что нужно. Добавляйте новые локации, когда открываете ещё одну.",
-    tr: "Bir işletme türüyle başlayın — restoran, klinik, kuaför, servis — ve adları düzenleyin. Yeni bir şube açtığınızda yer ekleyin.",
-    ar: "ابدأ بنوع النشاط — مطعم، عيادة، صالون، ورشة — وعدّل الأسماء. أضف مواقع جديدة عند فتح فرع آخر.",
-    hi: "एक दुकान प्रकार से शुरू करें — रेस्तरां, क्लिनिक, सैलून, रिपेयर — और नाम बदल लें। नई शाखा खोलने पर और जगहें जोड़ें।",
-    id: "Mulai dari jenis usaha — restoran, klinik, salon, bengkel — lalu ubah namanya. Tambah lokasi baru saat membuka cabang.",
-    zh: "从店铺类型开始 —— 餐厅、诊所、美容院、维修店 —— 名字随时可改。开新店时再加地点。",
-    ja: "店の種類から始めましょう — レストラン、クリニック、サロン、修理店 — 名前はあとから変更できます。新しい店を開いたら場所を追加してください。",
-    ko: "가게 유형에서 시작하세요 — 식당, 클리닉, 미용실, 수리점 — 이름은 나중에 바꿀 수 있습니다. 새 지점을 열면 위치를 추가하세요.",
-    sw: "Anza na aina ya biashara — mgahawa, kliniki, saluni, karakana — kisha ibadilishe majina. Ongeza maeneo mpya unapofungua lingine.",
-    pcm: "Start from shop type — restaurant, clinic, salon, repair — den change di names. Add another place when you open new one.",
-    yo: "Bẹ̀rẹ̀ pẹ̀lú irú ọ̀wọ̀ — àjọ̀ yọjọ́, ilé ìwòsàn, ẹ̀wà, adánì — sí i àwọn orúkọ. Fi àwọn ibi mìíràn kun nígbà tí o bá tẹ̀ úṣẹ́ tuntun.",
-    ha: "Fara daga irin kasuwanci — abinci, asibiti, salon, gyaran kaya — sanya canjin suna. ƙara wurare lokacin da ka buɗe sabo.",
-    ig: "Malite site na ụdọ azụmahịa — nri, ọgwụ, ụlọ ọsọ ọla, nchọọta — gbanwee aha. Tinye ebe ndị ọzọ ma ị tinye ọhụrụ.",
+    fr: "Choisissez un type de commerce, restaurant, clinique, salon, atelier, et modifiez les noms. Ajoutez d'autres sites quand vous ouvrez un nouveau.",
+    es: "Empieza con un tipo de negocio, restaurante, clínica, salón, taller, y edita los nombres. Añade más ubicaciones cuando abras otra.",
+    pt: "Comece por um tipo de negócio, restaurante, clínica, salão, oficina, e edite os nomes. Adicione mais localizações quando abrir outra.",
+    de: "Starten Sie mit einem Geschäftstyp, Restaurant, Klinik, Salon, Werkstatt, und ändern Sie die Namen. Fügen Sie weitere Standorte hinzu, wenn Sie einen neuen eröffnen.",
+    it: "Parti da un tipo di attività, ristorante, clinica, salone, officina, e modifica i nomi. Aggiungi altre sedi quando ne apri una nuova.",
+    nl: "Begin met een soort bedrijf, restaurant, kliniek, salon, werkplaats, en pas de namen aan. Voeg meer locaties toe zodra je er een opent.",
+    ru: "Начните с типа бизнеса, ресторан, клиника, салон, мастерская, и переименуйте, что нужно. Добавляйте новые локации, когда открываете ещё одну.",
+    tr: "Bir işletme türüyle başlayın, restoran, klinik, kuaför, servis, ve adları düzenleyin. Yeni bir şube açtığınızda yer ekleyin.",
+    ar: "ابدأ بنوع النشاط، مطعم، عيادة، صالون، ورشة، وعدّل الأسماء. أضف مواقع جديدة عند فتح فرع آخر.",
+    hi: "एक दुकान प्रकार से शुरू करें, रेस्तरां, क्लिनिक, सैलून, रिपेयर, और नाम बदल लें। नई शाखा खोलने पर और जगहें जोड़ें।",
+    id: "Mulai dari jenis usaha, restoran, klinik, salon, bengkel, lalu ubah namanya. Tambah lokasi baru saat membuka cabang.",
+    zh: "从店铺类型开始，餐厅、诊所、美容院、维修店，名字随时可改。开新店时再加地点。",
+    ja: "店の種類から始めましょう、レストラン、クリニック、サロン、修理店、名前はあとから変更できます。新しい店を開いたら場所を追加してください。",
+    ko: "가게 유형에서 시작하세요, 식당, 클리닉, 미용실, 수리점, 이름은 나중에 바꿀 수 있습니다. 새 지점을 열면 위치를 추가하세요.",
+    sw: "Anza na aina ya biashara, mgahawa, kliniki, saluni, karakana, kisha ibadilishe majina. Ongeza maeneo mpya unapofungua lingine.",
+    pcm: "Start from shop type, restaurant, clinic, salon, repair, den change di names. Add another place when you open new one.",
+    yo: "Bẹ̀rẹ̀ pẹ̀lú irú ọ̀wọ̀, àjọ̀ yọjọ́, ilé ìwòsàn, ẹ̀wà, adánì, sí i àwọn orúkọ. Fi àwọn ibi mìíràn kun nígbà tí o bá tẹ̀ úṣẹ́ tuntun.",
+    ha: "Fara daga irin kasuwanci, abinci, asibiti, salon, gyaran kaya, sanya canjin suna. ƙara wurare lokacin da ka buɗe sabo.",
+    ig: "Malite site na ụdọ azụmahịa, nri, ọgwụ, ụlọ ọsọ ọla, nchọọta, gbanwee aha. Tinye ebe ndị ọzọ ma ị tinye ọhụrụ.",
   },
   "band.try": {
     fr: "Essayer la démo en direct",

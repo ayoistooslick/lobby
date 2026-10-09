@@ -55,7 +55,7 @@ export default function DashboardQueue() {
     void load();
   }, [load]);
 
-  // The layout already listens for changes; this screen refetches with them.
+  // The layout already listens for changes. This screen refetches with them.
   useEffect(() => {
     if (connection === "live") void load();
   }, [connection, load]);

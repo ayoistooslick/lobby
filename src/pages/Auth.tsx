@@ -88,7 +88,7 @@ export default function Auth() {
         if (!cancelled && data.business && !isInvite) setAlreadyIn(true);
       })
       .catch(() => {
-        // The form still works if this check fails; the server validates on submit.
+        // The form still works if this check fails. The server validates on submit.
       });
     api<{ templates: TemplateInfo[] }>("/api/auth/templates")
       .then((data) => {
