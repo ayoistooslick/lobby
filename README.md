@@ -1,45 +1,96 @@
-# Lobby
+<div align="center">
 
-Lobby is a small queue management system for local businesses: pharmacies, clinics, salons,
-barbershops, repair shops, banks, and anyone else who calls people one at a time.
+<p><sub><b>QUEUES FOR SHOPS, CLINICS AND SALONS</b></sub></p>
 
-Customers scan a permanent QR code, take a number in their phone browser, and watch their
-position update live. Staff get one obvious button: **Call next**.
+<img src="public/og.png" alt="Lobby — Queues, without the chaos." width="760">
 
-No app to install. No account for customers. No subscriptions, no analytics, no chatbots,
-just a queue that works.
+**One QR code on the door. Customers scan it, take a number, and watch their
+place in line from anywhere. Staff press one button, and the TV keeps everyone
+informed.**
 
-## Why
+[![Set up your business](https://img.shields.io/badge/Set_up_your_business-101012?style=for-the-badge)](#quick-start)
+[**Try the live demo →**](#try-the-live-demo)
 
-Small shops usually end up with a crowd at the counter or a paper system that breaks down.
-Lobby is the digital version of the paper number slip: simple enough that a shop owner
-understands it in ten seconds, and small enough that one developer can read the whole
-codebase in an afternoon.
+✓ Works on any phone &nbsp;✓ Live by default &nbsp;✓ No app for customers, no sign-up for them. Open source, runs on your own server.
 
-## What's inside
+</div>
 
-- A permanent QR code per business: view it, download it as a PNG, print it
-- Joining from any phone browser: no app, no account, just a number
-- Live position, "now serving", people ahead, "You're next"
-- A clear turn notification on the customer's screen, with an "I'm here" confirmation
-- Staff actions: **Call next**, **Mark as served**, **Skip**, **No show**
-- Pause and resume the queue
-- Light and dark theme, mobile-first layout, high contrast
-- Business settings (name, optional note shown to customers)
-- Real-time updates: when staff tap a button, open screens change by themselves
+<div align="center">
 
-## Tech stack
+[▶ Watch the launch film →](public/launch-video.mp4)
 
-| Layer      | Choice                                                       |
-| ---------- | ------------------------------------------------------------ |
-| Frontend   | React 19 + TypeScript, built with Vite, plain CSS             |
-| Backend    | Node.js + Express 5 (TypeScript, compiled to CommonJS)         |
-| Database   | PostgreSQL when `DATABASE_URL` is set, otherwise SQLite through `better-sqlite3` |
-| Real-time  | Server-Sent Events (one tiny "something changed" signal)      |
-| Auth       | `httpOnly` session cookie, scrypt-hashed passwords            |
-| QR codes   | `qrcode`, generated in the browser                            |
+</div>
 
-There is no UI framework and no external service. `npm install` is all you need.
+---
+
+## From door to done in four steps
+
+| Step | What happens |
+| :---: | --- |
+| **01** | **Customers join** — They scan the code, pick a service, and take a number. No app, no account. |
+| **02** | **Staff call next** — One big button serves the next person and keeps the line fair. |
+| **03** | **Everyone sees their status** — Each phone shows their place, who's ahead, and the wait, live, without refreshing. |
+| **04** | **The display keeps order** — A TV in the waiting area shows who's being served and who's next. |
+
+## Everything a queue needs, nothing it doesn't
+
+Lobby does one job well. Every feature below is part of the product today.
+
+|  |  |
+| --- | --- |
+| **One code, always current**<br>A permanent QR code for each location. Print it once, renaming the business never breaks it. | **Many queues, one screen**<br>Split the counter into services like consultation, pickup, or returns, each with its own numbers and counters. |
+| **Roles that fit a shop**<br>Invite staff by link, pin them to a branch, and keep owners in charge of the keys. | **Looks like your business**<br>Your colours, logo, and note show up on every customer's phone and the TV. |
+| **Close without confusion**<br>Pause a queue with one tap. The door sign says so, and no one takes a number into a closed counter. | **Facts for the quiet evening**<br>Wait times, busiest hours, and a full history, so next week's rota isn't a guess. |
+
+## What your customers see
+
+One screen with the same answers every time. It works in any phone browser,
+and when you call their number it flips to *It's your turn*.
+
+| | |
+| --- | --- |
+| You're number | **24** |
+| People ahead of you | **3** |
+| When it happens | **It's your turn!** |
+
+## A display your waiting room deserves
+
+Open the display on any TV browser. Huge numbers, the next five in line, and
+other queues at a glance. It updates the second your staff do.
+
+## Made for places with a counter
+
+![Pharmacies](https://img.shields.io/badge/Pharmacies-101012?style=flat-square)
+![Clinics](https://img.shields.io/badge/Clinics-101012?style=flat-square)
+![Salons](https://img.shields.io/badge/Salons-101012?style=flat-square)
+![Barbershops](https://img.shields.io/badge/Barbershops-101012?style=flat-square)
+![Repair shops](https://img.shields.io/badge/Repair_shops-101012?style=flat-square)
+![Banks](https://img.shields.io/badge/Banks-101012?style=flat-square)
+![Post offices](https://img.shields.io/badge/Post_offices-101012?style=flat-square)
+![Government offices](https://img.shields.io/badge/Government_offices-101012?style=flat-square)
+
+> ### Your queue could be live in a minute.
+>
+> Start from a shop type (restaurant, clinic, salon, repair shop) and edit the
+> names. Add more locations whenever you open another.
+>
+> [![Set up your business](https://img.shields.io/badge/Set_up_your_business-101012?style=for-the-badge)](#quick-start)
+> [**Try the live demo →**](#try-the-live-demo)
+
+---
+
+## Try the live demo
+
+A practice shop you can press buttons on. Join as a customer, call numbers as
+staff, and watch the TV screen. Nothing here is real.
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:5173/demo — or start at http://localhost:5173 and click
+**Set up your business** to make a real one.
 
 ## Quick start
 
@@ -55,8 +106,6 @@ npm run dev
 - The Vite dev server runs at http://localhost:5173 and proxies `/api` to the API server.
 - The API server runs at http://localhost:3000.
 
-Open http://localhost:5173, click **Set up your business**, and you're away.
-
 To run it the way production does:
 
 ```bash
@@ -65,6 +114,19 @@ npm start         # serves the API and the built frontend on PORT (default 3000)
 ```
 
 Other scripts: `npm run dev:server`, `npm run dev:client`, `npm run typecheck`.
+
+## Tech stack
+
+| Layer      | Choice                                                        |
+| ---------- | ------------------------------------------------------------- |
+| Frontend   | React 19 + TypeScript, built with Vite, plain CSS              |
+| Backend    | Node.js + Express 5 (TypeScript, compiled to CommonJS)         |
+| Database   | PostgreSQL when `DATABASE_URL` is set, otherwise SQLite through `better-sqlite3` |
+| Real-time  | Server-Sent Events (one tiny "something changed" signal)       |
+| Auth       | `httpOnly` session cookie, scrypt-hashed passwords             |
+| QR codes   | `qrcode`, generated in the browser                             |
+
+There is no UI framework and no external service. `npm install` is all you need.
 
 ## Environment variables
 
@@ -166,7 +228,7 @@ src/                React app
   components/       layout, route guard, language picker, shared states
   lib/              fetch wrapper, hooks, theme, i18n (20 languages), types
   styles.css        the whole visual system (light + dark tokens)
-public/             favicon
+public/             favicon, social cards
 ```
 
 ## Deployment
