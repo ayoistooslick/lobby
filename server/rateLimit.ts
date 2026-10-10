@@ -58,7 +58,8 @@ export function limit(
       next();
       return;
     }
-    const retryAfter = Math.max(1, Math.ceil((buckets.get(key)?.resetAt ?? Date.now()) / 1000));
+    // Seconds until this bucket resets, not an absolute timestamp.
+    const retryAfter = Math.max(1, Math.ceil(((buckets.get(key)?.resetAt ?? Date.now()) - Date.now()) / 1000));
     res.setHeader("Retry-After", String(retryAfter));
     if (opts.onLimit) {
       opts.onLimit(req, res, retryAfter);

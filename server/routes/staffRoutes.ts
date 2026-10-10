@@ -292,6 +292,10 @@ staffRouter.get("/tickets/:ticketId/events", async (req, res) => {
   const ticketId = idParam(req.params.ticketId, "Number");
   const ticket = await store.getTicket(scope.business.id, ticketId);
   if (!ticket) throw new ApiError(404, "We couldn't find that number.");
+  // Branch-pinned staff cannot read another branch's history either.
+  if (ticket.branch_id && scope.staff.branch_id && ticket.branch_id !== scope.staff.branch_id) {
+    throw new ApiError(404, "We couldn't find that number.");
+  }
   const events = await store.listEvents({ businessId: scope.business.id, ticketId });
   res.json({ ok: true, ticket: staffTicketView(ticket, 0), events: events.map(eventView) });
 });

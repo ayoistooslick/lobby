@@ -48,6 +48,18 @@ export type QueueAction =
   | "cancel"
   | "recall";
 
+export interface CreateTicketInput {
+  businessId: string;
+  branchId: string;
+  serviceId: string;
+  name: string;
+  phone?: string;
+  source?: string;
+  deviceToken?: string;
+  counterId?: string;
+  note?: string;
+}
+
 export interface QueueSnapshot {
   service: ServiceRow;
   branch: BranchRow;
@@ -792,68 +804,84 @@ export class SqlStore {
    * Numbers restart every day per service. The lock key keeps two phones
    * joining at the same instant from drawing the same number.
    */
-  async createTicket(input: {
-    businessId: string;
-    branchId: string;
-    serviceId: string;
-    name: string;
-    phone?: string;
-    source?: string;
-    deviceToken?: string;
-    counterId?: string;
-    note?: string;
-  }): Promise<TicketRow> {
+  async createTicket(input: CreateTicketInput): Promise<TicketRow> {
+    const day = dayKey(Date.now());
+    const service = await this.getService(input.serviceId);
+    return this.driver.tx(`ticket:${input.serviceId}:${day}`, (tx) => this.insertTicket(tx, input, service));
+  }
+
+  /**
+   * Customer join with the device check inside the same transaction as the
+   * insert. Two parallel taps (or a scripted double-post) from one phone are
+   * serialised by the per-service lock, so the second one can never take a
+   * second number ahead of everybody else.
+   */
+  async joinTicketForDevice(input: CreateTicketInput): Promise<{ ticket: TicketRow; duplicate: boolean }> {
+    const day = dayKey(Date.now());
+    const service = await this.getService(input.serviceId);
+    return this.driver.tx(`ticket:${input.serviceId}:${day}`, async (tx) => {
+      if (input.deviceToken) {
+        const existing = await tx.get<TicketRow>(
+          `SELECT ${TICKET_COLUMNS} FROM tickets
+           WHERE service_id = $1 AND device_token = $2 AND status IN ('waiting', 'called', 'on_hold')
+           ORDER BY created_at DESC LIMIT 1`,
+          [input.serviceId, input.deviceToken]
+        );
+        if (existing) return { ticket: existing, duplicate: true };
+      }
+      return { ticket: await this.insertTicket(tx, input, service), duplicate: false };
+    });
+  }
+
+  private async insertTicket(tx: SqlDriver, input: CreateTicketInput, service: ServiceRow | undefined): Promise<TicketRow> {
     const id = newId();
     const now = Date.now();
     const day = dayKey(now);
-    const service = await this.getService(input.serviceId);
-    return this.driver.tx(`ticket:${input.serviceId}:${day}`, async (tx) => {
-      const maxRow = await tx.get<{ n: number }>(
-        "SELECT COALESCE(MAX(number), 0) AS n FROM tickets WHERE service_id = $1 AND day = $2",
-        [input.serviceId, day]
-      );
-      const number = Number(maxRow?.n ?? 0) + 1;
-      await tx.run(
-        `INSERT INTO tickets (${TICKET_COLUMNS})
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'waiting', 0, $11, $12, $13, 0, '', $14, $15, 0, 0, 0)`,
-        [
-          id,
-          input.businessId,
-          input.branchId,
-          input.serviceId,
-          input.counterId ?? "",
-          day,
-          number,
-          service?.prefix ?? "A",
-          input.name,
-          input.phone ?? "",
-          input.source ?? "qr",
-          input.deviceToken ?? "",
-          input.note ?? "",
-          now,
-          now,
-        ]
-      );
-      await this.logEvent(
-        {
-          businessId: input.businessId,
-          branchId: input.branchId,
-          serviceId: input.serviceId,
-          ticketId: id,
-          type: "joined",
-          actor: input.source === "desk" ? "staff" : "customer",
-          detail: input.name,
-          at: now,
-        },
-        tx
-      );
-      const row = await tx.get<TicketRow>(
-        `SELECT ${TICKET_COLUMNS} FROM tickets WHERE id = $1 AND business_id = $2`,
-        [id, input.businessId]
-      );
-      if (!row) throw new Error("Could not create the ticket.");
-      return row;
-    });
+    const maxRow = await tx.get<{ n: number }>(
+      "SELECT COALESCE(MAX(number), 0) AS n FROM tickets WHERE service_id = $1 AND day = $2",
+      [input.serviceId, day]
+    );
+    const number = Number(maxRow?.n ?? 0) + 1;
+    await tx.run(
+      `INSERT INTO tickets (${TICKET_COLUMNS})
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'waiting', 0, $11, $12, $13, 0, '', $14, $15, 0, 0, 0)`,
+      [
+        id,
+        input.businessId,
+        input.branchId,
+        input.serviceId,
+        input.counterId ?? "",
+        day,
+        number,
+        service?.prefix ?? "A",
+        input.name,
+        input.phone ?? "",
+        input.source ?? "qr",
+        input.deviceToken ?? "",
+        input.note ?? "",
+        now,
+        now,
+      ]
+    );
+    await this.logEvent(
+      {
+        businessId: input.businessId,
+        branchId: input.branchId,
+        serviceId: input.serviceId,
+        ticketId: id,
+        type: "joined",
+        actor: input.source === "desk" ? "staff" : "customer",
+        detail: input.name,
+        at: now,
+      },
+      tx
+    );
+    const row = await tx.get<TicketRow>(
+      `SELECT ${TICKET_COLUMNS} FROM tickets WHERE id = $1 AND business_id = $2`,
+      [id, input.businessId]
+    );
+    if (!row) throw new Error("Could not create the ticket.");
+    return row;
   }
 
   /** Always takes the business first: a ticket id alone must never be enough. */

@@ -76,7 +76,7 @@ Session tokens are random values created at login and stored server-side as hash
 | `PORT`          | `3000`             | Port the HTTP server listens on (hosts like Render inject this)         |
 | `DATABASE_URL`  | unset              | PostgreSQL connection string. **When set, Lobby uses Postgres. When unset, it falls back to the SQLite file automatically** |
 | `DATABASE_PATH` | `./data/lobby.db`  | SQLite file location (only used when `DATABASE_URL` is not set)         |
-| `NODE_ENV`      | unset              | Set to `production` in production so session cookies get the `Secure` flag |
+| `NODE_ENV`      | unset              | Set to `production` in production (HSTS, asset caching). Session cookies get `Secure` automatically whenever the request arrives over HTTPS, even without it |
 
 ### Choosing a database
 
@@ -129,13 +129,24 @@ Numbers restart each day and are unique per business per day.
 ### Security notes
 
 - Passwords hashed with scrypt. Login errors are identical for unknown emails and wrong
-  passwords (and unknown emails still pay the hashing cost).
-- Session cookies are `httpOnly`, `SameSite=Lax`, `Secure` in production.
+  passwords (and unknown emails still pay the hashing cost). Login is throttled per IP
+  *and* per email address, and obvious passwords (`password123`, your own email, a
+  repeated character) are refused at signup, invite and password change.
+- Session cookies are `httpOnly`, `SameSite=Lax`, and `Secure` on any HTTPS request
+  (HSTS is sent the same way), independent of `NODE_ENV`. Sessions and
+  invite tokens are stored as SHA-256 hashes, never in the clear.
 - Every staff endpoint requires a session and only touches rows belonging to that
   session's business. Customers can only act on their own ticket, which is referenced by
   an unguessable id.
+- Queue order is server-owned: numbers are handed out inside one serialised transaction,
+  and the one-number-per-device check runs in the *same* transaction as the insert, so a
+  double tap or scripted parallel join can never take a second number, let alone a better
+  place in line.
+- Public queue/display payloads never include the owner's login email or name. Live
+  update streams are capped per IP and globally so they cannot be used to exhaust
+  connections.
 - All input is validated on the server. Mutations expect JSON (which blocks simple
-  cross-site form attacks), and there are basic per-IP and per-queue rate limits.
+  cross-site form attacks), and there are per-IP and per-queue rate limits.
 
 ## Project structure
 

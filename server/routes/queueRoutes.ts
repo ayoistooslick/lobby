@@ -12,7 +12,7 @@ import {
   optionalText,
   phone as phoneNumber,
 } from "../validate";
-import { customerTicketView, publicBranch, publicBusiness, publicService } from "../views";
+import { customerTicketView, publicBranch, publicBusinessSafe, publicService } from "../views";
 
 export const queueRouter = Router();
 
@@ -70,7 +70,7 @@ queueRouter.get("/:slug", limit("queue-read", 300, 60_000), async (req, res) => 
 
   res.json({
     ok: true,
-    business: publicBusiness(business),
+    business: publicBusinessSafe(business),
     branches: branches.map((branch) => publicBranch(branch)),
     branch: branch ? publicBranch(branch) : null,
     services: services.map((service) => publicService(service)),
@@ -114,18 +114,9 @@ queueRouter.post("/:slug/join", ...joinLimits, async (req, res) => {
     }
   }
 
-  // A refresh, a double tap or a reopened tab must not take a second number.
-  const existing = await store.findOpenTicketForDevice(service.id, deviceToken);
-  if (existing) {
-    res.status(200).json({
-      ok: true,
-      duplicate: true,
-      ticket: customerTicketView(existing, await store.peopleAhead(existing)),
-    });
-    return;
-  }
-
-  const ticket = await store.createTicket({
+  // One transaction for the device check and the insert: a double tap, a
+  // refresh storm or a scripted parallel post can never take a second number.
+  const { ticket, duplicate } = await store.joinTicketForDevice({
     businessId: business.id,
     branchId: branch.id,
     serviceId: service.id,
@@ -135,9 +126,9 @@ queueRouter.post("/:slug/join", ...joinLimits, async (req, res) => {
     deviceToken,
   });
   publishBranch(branch.id, service.id);
-  res.status(201).json({
+  res.status(duplicate ? 200 : 201).json({
     ok: true,
-    duplicate: false,
+    duplicate,
     ticket: customerTicketView(ticket, await store.peopleAhead(ticket)),
   });
 });
@@ -190,7 +181,12 @@ queueRouter.post("/:slug/ticket/:ticketId/leave", limit("leave", 40, 60_000), as
 
 queueRouter.get("/:slug/stream", async (req, res) => {
   const business = await findBusiness(String(req.params.slug));
-  subscribe(await channelFor(business, req.query.channel), res);
+  const channel = await channelFor(business, req.query.channel);
+  // Connection caps stop one client from holding thousands of streams open.
+  if (!subscribe(channel, res, req.ip ?? "unknown")) {
+    res.status(429).json({ ok: false, error: "Too many live connections right now. Please wait a moment." });
+    return;
+  }
 });
 
 /**

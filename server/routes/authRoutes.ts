@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   DUMMY_PASSWORD_HASH,
+  assertPasswordStrength,
   authed,
   clearSessionCookie,
   createSession,
@@ -32,6 +33,8 @@ authRouter.post("/signup", limit("signup", 5, 60 * 60_000), async (req, res) => 
     typeof req.body?.branchName === "string" && req.body.branchName.trim()
       ? text(req.body.branchName, { label: "Branch name", max: 60 })
       : "Main branch";
+
+  assertPasswordStrength(password, { email: emailAddress, name: ownerName });
 
   if (await store.getBusinessByEmail(emailAddress)) {
     throw new ApiError(409, "An account with this email already exists. Try signing in instead.");
@@ -72,11 +75,17 @@ authRouter.post("/signup", limit("signup", 5, 60 * 60_000), async (req, res) => 
   });
 
   const { token, expiresAt } = await createSession(staff.id, userAgentOf(req));
-  setSessionCookie(res, token, expiresAt);
+  setSessionCookie(req, res, token, expiresAt);
   res.status(201).json({ ok: true, business: publicBusiness(business), staff: staffView(staff, staff.id) });
 });
 
-authRouter.post("/login", limit("login", 15, 300_000), async (req, res) => {
+// Two buckets: one per address (stops a distributed spread against one
+// account) and one per IP (already enforced further down for every route).
+const loginByEmail = limit("login-email", 10, 15 * 60_000, (req) =>
+  `email:${String(req.body?.email ?? "").toLowerCase().trim().slice(0, 254)}`
+);
+
+authRouter.post("/login", loginByEmail, limit("login", 15, 300_000), async (req, res) => {
   const emailAddress = email(req.body?.email);
   const password = req.body?.password;
   if (typeof password !== "string" || password.length === 0) {
@@ -94,7 +103,7 @@ authRouter.post("/login", limit("login", 15, 300_000), async (req, res) => {
   }
 
   const { token, expiresAt } = await createSession(staff.id, userAgentOf(req));
-  setSessionCookie(res, token, expiresAt);
+  setSessionCookie(req, res, token, expiresAt);
   res.json({
     ok: true,
     business: publicBusiness(business),
@@ -123,7 +132,7 @@ authRouter.get("/me", async (req, res) => {
 authRouter.post("/logout", async (req, res) => {
   const token = readSessionToken(req);
   if (token) await deleteSession(token);
-  clearSessionCookie(res);
+  clearSessionCookie(req, res);
   res.json({ ok: true });
 });
 
@@ -161,6 +170,8 @@ authRouter.post("/invite/:token", limit("invite-accept", 10, 300_000), async (re
   const business = await store.getBusinessById(invite.business_id);
   if (!business) throw new ApiError(404, "This shop no longer exists.");
 
+  assertPasswordStrength(password, { email: invite.email, name });
+
   // Same email may work at another shop. Only this business's team blocks it.
   const existing = await store.getStaffInBusiness(invite.email, invite.business_id);
   if (existing) {
@@ -186,7 +197,7 @@ authRouter.post("/invite/:token", limit("invite-accept", 10, 300_000), async (re
   });
 
   const { token: sessionToken, expiresAt } = await createSession(staff.id, userAgentOf(req));
-  setSessionCookie(res, sessionToken, expiresAt);
+  setSessionCookie(req, res, sessionToken, expiresAt);
   res.status(201).json({
     ok: true,
     business: publicBusiness(business),
@@ -203,11 +214,12 @@ authRouter.post("/password", requireAuth, limit("password", 10, 300_000), async 
   if (!verifyPassword(current, scope.staff.password_hash)) {
     throw new ApiError(400, "That current password isn't right.");
   }
+  assertPasswordStrength(next, { email: scope.staff.email, name: scope.staff.name });
   await store.updateStaff(scope.staff.id, { password_hash: hashPassword(next) });
   // Every other device has to sign in again with the new password.
   await store.deleteSessionsForStaff(scope.staff.id);
   const { token, expiresAt } = await createSession(scope.staff.id, userAgentOf(req));
-  setSessionCookie(res, token, expiresAt);
+  setSessionCookie(req, res, token, expiresAt);
   await store.logAudit({
     businessId: scope.business.id,
     actorId: scope.staff.id,

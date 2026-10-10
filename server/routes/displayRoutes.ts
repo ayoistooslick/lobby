@@ -3,7 +3,7 @@ import { subscribe } from "../events";
 import { limit } from "../rateLimit";
 import { store } from "../store";
 import { ApiError, isSlug } from "../validate";
-import { publicBranch, publicBusiness, publicService, staffCounter } from "../views";
+import { publicBranch, publicBusinessSafe, publicService, staffCounter } from "../views";
 
 export const displayRouter = Router();
 
@@ -47,7 +47,7 @@ displayRouter.get("/:slug", limit("display", 600, 60_000), async (req, res) => {
 
   res.json({
     ok: true,
-    business: publicBusiness(business),
+    business: publicBusinessSafe(business),
     branches: branches.map(publicBranch),
     branch: branch ? publicBranch(branch) : null,
     services: services.map(publicService),
@@ -88,5 +88,8 @@ displayRouter.get("/:slug/stream", async (req, res) => {
     const branch = await store.getBranch(id);
     if (branch && branch.business_id === business.id) channel = `branch:${branch.id}`;
   }
-  subscribe(channel, res);
+  if (!subscribe(channel, res, req.ip ?? "unknown")) {
+    res.status(429).json({ ok: false, error: "Too many live connections right now. Please wait a moment." });
+    return;
+  }
 });

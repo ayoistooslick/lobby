@@ -30,10 +30,12 @@ function section(title) {
 /** A tiny cookie jar so each actor keeps its own session. */
 function jar() {
   const cookies = new Map();
+  const raws = [];
   return {
     capture(res) {
       const list = typeof res.headers.getSetCookie === "function" ? res.headers.getSetCookie() : [];
       for (const raw of list) {
+        raws.push(raw);
         const [pair] = raw.split(";");
         const eq = pair.indexOf("=");
         if (eq > 0) cookies.set(pair.slice(0, eq).trim(), pair.slice(eq + 1).trim());
@@ -41,6 +43,13 @@ function jar() {
     },
     header() {
       return [...cookies.entries()].map(([k, v]) => `${k}=${v}`).join("; ");
+    },
+    /** Most recent raw Set-Cookie line for a cookie name (attributes included). */
+    raw(name) {
+      for (let i = raws.length - 1; i >= 0; i -= 1) {
+        if (raws[i].startsWith(`${name}=`)) return raws[i];
+      }
+      return "";
     },
   };
 }
@@ -744,9 +753,21 @@ check("password change keeps the current device signed in", oldSession.data.staf
 const relogin = await api("/api/auth/login", {
   method: "POST",
   body: { email: `owner-b-${uniq}@test.dev`, password: "better-horse-22" },
+  cookies: ownerB,
   expectStatus: 200,
 });
 check("new password accepted", Boolean(relogin.data.staff?.id));
+
+// Session cookie flags: HttpOnly + SameSite always, Secure on any TLS origin.
+const rawSession = ownerB.raw("lobby_session");
+check("session cookie is HttpOnly", /;\s*HttpOnly/i.test(rawSession), rawSession);
+check("session cookie is SameSite=Lax", /;\s*SameSite=Lax/i.test(rawSession), rawSession);
+if (BASE.startsWith("https:")) {
+  check("session cookie is Secure on https", /;\s*Secure/i.test(rawSession), rawSession);
+  const head = await fetch(`${BASE}/api/health`);
+  await head.text();
+  check("HSTS header sent on https", (head.headers.get("strict-transport-security") || "").includes("max-age="));
+}
 
 const logoutB = await api("/api/auth/logout", { method: "POST", cookies: ownerB, expectStatus: 200 });
 check("logout clears the session", logoutB.status === 200);

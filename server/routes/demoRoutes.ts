@@ -3,7 +3,7 @@ import { publishBranch, subscribe } from "../events";
 import { limit } from "../rateLimit";
 import { DEMO_CAPACITY, clearDemoQueue, demoHandle, seedDemoQueue } from "../demo";
 import { ApiError, id as idParam, oneOf, optionalText } from "../validate";
-import { staffTicketView, publicBusiness, publicService, staffCounter } from "../views";
+import { staffTicketView, publicBusinessSafe, publicService, staffCounter } from "../views";
 import { store } from "../store";
 import type { QueueAction } from "../store";
 
@@ -50,7 +50,7 @@ demoRouter.get("/", async (_req, res) => {
 
   res.json({
     ok: true,
-    business: publicBusiness(business),
+    business: publicBusinessSafe(business),
     branch: { id: branch.id, slug: branch.slug, name: branch.name },
     services: cards,
     totals: { waiting: waitingTotal, served: servedTotal },
@@ -135,7 +135,10 @@ demoRouter.post("/reset", limit("demo-reset", 30, 60_000), async (_req, res) => 
   res.json({ ok: true });
 });
 
-demoRouter.get("/stream", async (_req, res) => {
+demoRouter.get("/stream", async (req, res) => {
   const { branch } = await handle();
-  subscribe(`branch:${branch.id}`, res);
+  if (!subscribe(`branch:${branch.id}`, res, req.ip ?? "unknown")) {
+    res.status(429).json({ ok: false, error: "Too many live connections right now. Please wait a moment." });
+    return;
+  }
 });

@@ -41,7 +41,7 @@ async function main(): Promise<void> {
   app.disable("x-powered-by");
   app.disable("etag");
 
-  app.use((_req, res, next) => {
+  app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", CSP);
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -49,7 +49,9 @@ async function main(): Promise<void> {
     res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
     res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
     res.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=()");
-    if (process.env.NODE_ENV === "production") {
+    // Browsers ignore HSTS over plain http, so it is safe to send whenever
+    // the request arrived over TLS — even if NODE_ENV was never set.
+    if (req.secure || process.env.NODE_ENV === "production") {
       res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
     }
     next();

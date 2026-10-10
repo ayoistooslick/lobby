@@ -40,6 +40,69 @@ export function verifyPassword(password: string, stored: string): boolean {
 // Spent on unknown emails so login timing doesn't reveal which accounts exist.
 export const DUMMY_PASSWORD_HASH = hashPassword("placeholder-password");
 
+/**
+ * Passwords that show up in every breach dump. Exact matches only, checked
+ * case-insensitively, so a shop owner can still pick a real passphrase.
+ */
+const COMMON_PASSWORDS = new Set([
+  "password",
+  "password1",
+  "password123",
+  "12345678",
+  "123456789",
+  "1234567890",
+  "qwerty123",
+  "qwertyuiop",
+  "letmein",
+  "welcome1",
+  "welcome123",
+  "admin123",
+  "iloveyou",
+  "monkey123",
+  "dragon123",
+  "sunshine1",
+  "princess1",
+  "football1",
+  "baseball1",
+  "abc123456",
+  "aaaaaaaa",
+  "11111111",
+  "00000000",
+  "passw0rd",
+  "trustno1",
+  "starwars1",
+  "changeme",
+  "secret123",
+  "login123",
+  "master123",
+]);
+
+/**
+ * Guards signup, invite acceptance and password change. Deliberately shallow:
+ * no forced symbol soup, just the rules that actually stop a guessable
+ * account, so honest users are not pushed toward `Passw0rd!`.
+ */
+export function assertPasswordStrength(
+  password: string,
+  context: { email?: string; name?: string } = {}
+): void {
+  const lower = password.toLowerCase();
+  if (COMMON_PASSWORDS.has(lower)) {
+    throw new ApiError(400, "That password is too easy to guess. Choose something less common.");
+  }
+  const email = (context.email ?? "").toLowerCase();
+  if (email && (lower === email || lower === email.split("@")[0])) {
+    throw new ApiError(400, "Your password cannot be your email address.");
+  }
+  const name = (context.name ?? "").toLowerCase().trim();
+  if (name.length >= 4 && lower === name) {
+    throw new ApiError(400, "Your password cannot just be your name.");
+  }
+  if (/^(.)\1+$/.test(password)) {
+    throw new ApiError(400, "Pick a password that isn't one repeated character.");
+  }
+}
+
 export function newInviteToken(): { token: string; tokenHash: string } {
   const token = randomToken(32);
   return { token, tokenHash: hashToken(token) };
@@ -91,17 +154,24 @@ export function readSessionToken(req: Request): string | null {
   return null;
 }
 
-export function setSessionCookie(res: Response, token: string, expiresAt: number): void {
+// `trust proxy` is on, so req.secure reflects x-forwarded-proto behind an
+// https proxy. That keeps the Secure flag correct even when NODE_ENV was never
+// set (no start script sets it), while plain-http local dev still works.
+function secureSuffix(req: Request): string {
+  return req.secure || process.env.NODE_ENV === "production" ? "; Secure" : "";
+}
+
+export function setSessionCookie(req: Request, res: Response, token: string, expiresAt: number): void {
   const maxAge = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  const secure = secureSuffix(req);
   res.append(
     "Set-Cookie",
     `${SESSION_COOKIE}=${token}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax${secure}`
   );
 }
 
-export function clearSessionCookie(res: Response): void {
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+export function clearSessionCookie(req: Request, res: Response): void {
+  const secure = secureSuffix(req);
   res.append("Set-Cookie", `${SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${secure}`);
 }
 

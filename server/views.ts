@@ -27,6 +27,16 @@ export function publicBusiness(business: BusinessRow) {
   };
 }
 
+/**
+ * What an unauthenticated visitor may see: no login email, no owner name.
+ * The owner's email is a credential target, so it never leaves the session's
+ * own payloads (me / login / overview).
+ */
+export function publicBusinessSafe(business: BusinessRow) {
+  const { slug, name, note, brandColor, brandAccent, logo, paused } = publicBusiness(business);
+  return { slug, name, note, brandColor, brandAccent, logo, paused };
+}
+
 export function publicBranch(branch: BranchRow) {
   return {
     id: branch.id,
