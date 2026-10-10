@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import LaunchVideo from "../components/LaunchVideo";
 import { useI18n } from "../lib/i18n";
 import { useDocumentTitle } from "../lib/hooks";
 import {
@@ -84,6 +85,13 @@ export default function Landing() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------ launch film */}
+      <section className="section launch-section">
+        <div className="shell-inner">
+          <LaunchVideo />
         </div>
       </section>
 

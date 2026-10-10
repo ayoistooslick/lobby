@@ -3076,6 +3076,30 @@ input::placeholder {
   }
 }
 
+/* The launch film on the landing page: exact 16:9, self-rendered (no
+   native media player chrome), framed like the product shots. */
+.launch-section {
+  padding-top: 0;
+}
+
+.launch-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: #101012;
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+
+.launch-video video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
