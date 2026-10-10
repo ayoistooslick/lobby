@@ -1,81 +1,57 @@
 <div align="center">
 
-<p><sub><b>QUEUES FOR SHOPS, CLINICS AND SALONS</b></sub></p>
-
-<img src="public/og.png" alt="Lobby — Queues, without the chaos." width="760">
-
-**One QR code on the door. Customers scan it, take a number, and watch their
-place in line from anywhere. Staff press one button, and the TV keeps everyone
-informed.**
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/readme/dark/0-hero.png">
+  <img src="public/readme/light/0-hero.png" alt="Lobby — Queues, without the chaos. One QR code on the door. Customers scan it, take a number, and watch their place in line from anywhere. Staff press one button, and the TV keeps everyone informed." width="820">
+</picture>
 
 [![Set up your business](https://img.shields.io/badge/Set_up_your_business-101012?style=for-the-badge)](#quick-start)
 [**Try the live demo →**](#try-the-live-demo)
 
-✓ Works on any phone &nbsp;✓ Live by default &nbsp;✓ No app for customers, no sign-up for them. Open source, runs on your own server.
+<br>
+
+<picture>
+  <img src="public/readme/film.gif" alt="The Lobby launch film — a day at a counter, from door to done." width="820">
+</picture>
+
+<sub>▶ <a href="public/launch-video.mp4">Watch the full-resolution launch film</a></sub>
+
+<br>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/readme/dark/2-flow.png">
+  <img src="public/readme/light/2-flow.png" alt="From door to done in four steps: 01 Customers join — they scan the code, pick a service, and take a number. No app, no account. 02 Staff call next — one big button serves the next person and keeps the line fair. 03 Everyone sees their status — each phone shows their place, who's ahead, and the wait, live, without refreshing. 04 The display keeps order — a TV in the waiting area shows who's being served and who's next." width="820">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/readme/dark/3-features.png">
+  <img src="public/readme/light/3-features.png" alt="Everything a queue needs, nothing it doesn't: one code always current; many queues on one screen; roles that fit a shop; looks like your business; close without confusion; facts for the quiet evening." width="820">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/readme/dark/4-see.png">
+  <img src="public/readme/light/4-see.png" alt="What your customers see: you're number 24, three people ahead of you, and It's your turn when it happens." width="820">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/readme/dark/5-display.png">
+  <img src="public/readme/light/5-display.png" alt="A display your waiting room deserves: open it on any TV browser — huge numbers, the next five in line, updated the second your staff do." width="820">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/readme/dark/6-places.png">
+  <img src="public/readme/light/6-places.png" alt="Made for places with a counter: pharmacies, clinics, salons, barbershops, repair shops, banks, post offices, government offices." width="820">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/readme/dark/7-band.png">
+  <img src="public/readme/light/7-band.png" alt="Your queue could be live in a minute. Start from a shop type and edit the names. Add more locations whenever you open another." width="820">
+</picture>
+
+[![Set up your business](https://img.shields.io/badge/Set_up_your_business-101012?style=for-the-badge)](#quick-start)
+[**Try the live demo →**](#try-the-live-demo)
 
 </div>
-
-<div align="center">
-
-[▶ Watch the launch film →](public/launch-video.mp4)
-
-</div>
-
----
-
-## From door to done in four steps
-
-| Step | What happens |
-| :---: | --- |
-| **01** | **Customers join** — They scan the code, pick a service, and take a number. No app, no account. |
-| **02** | **Staff call next** — One big button serves the next person and keeps the line fair. |
-| **03** | **Everyone sees their status** — Each phone shows their place, who's ahead, and the wait, live, without refreshing. |
-| **04** | **The display keeps order** — A TV in the waiting area shows who's being served and who's next. |
-
-## Everything a queue needs, nothing it doesn't
-
-Lobby does one job well. Every feature below is part of the product today.
-
-|  |  |
-| --- | --- |
-| **One code, always current**<br>A permanent QR code for each location. Print it once, renaming the business never breaks it. | **Many queues, one screen**<br>Split the counter into services like consultation, pickup, or returns, each with its own numbers and counters. |
-| **Roles that fit a shop**<br>Invite staff by link, pin them to a branch, and keep owners in charge of the keys. | **Looks like your business**<br>Your colours, logo, and note show up on every customer's phone and the TV. |
-| **Close without confusion**<br>Pause a queue with one tap. The door sign says so, and no one takes a number into a closed counter. | **Facts for the quiet evening**<br>Wait times, busiest hours, and a full history, so next week's rota isn't a guess. |
-
-## What your customers see
-
-One screen with the same answers every time. It works in any phone browser,
-and when you call their number it flips to *It's your turn*.
-
-| | |
-| --- | --- |
-| You're number | **24** |
-| People ahead of you | **3** |
-| When it happens | **It's your turn!** |
-
-## A display your waiting room deserves
-
-Open the display on any TV browser. Huge numbers, the next five in line, and
-other queues at a glance. It updates the second your staff do.
-
-## Made for places with a counter
-
-![Pharmacies](https://img.shields.io/badge/Pharmacies-101012?style=flat-square)
-![Clinics](https://img.shields.io/badge/Clinics-101012?style=flat-square)
-![Salons](https://img.shields.io/badge/Salons-101012?style=flat-square)
-![Barbershops](https://img.shields.io/badge/Barbershops-101012?style=flat-square)
-![Repair shops](https://img.shields.io/badge/Repair_shops-101012?style=flat-square)
-![Banks](https://img.shields.io/badge/Banks-101012?style=flat-square)
-![Post offices](https://img.shields.io/badge/Post_offices-101012?style=flat-square)
-![Government offices](https://img.shields.io/badge/Government_offices-101012?style=flat-square)
-
-> ### Your queue could be live in a minute.
->
-> Start from a shop type (restaurant, clinic, salon, repair shop) and edit the
-> names. Add more locations whenever you open another.
->
-> [![Set up your business](https://img.shields.io/badge/Set_up_your_business-101012?style=for-the-badge)](#quick-start)
-> [**Try the live demo →**](#try-the-live-demo)
 
 ---
 
@@ -228,7 +204,7 @@ src/                React app
   components/       layout, route guard, language picker, shared states
   lib/              fetch wrapper, hooks, theme, i18n (20 languages), types
   styles.css        the whole visual system (light + dark tokens)
-public/             favicon, social cards
+public/             favicon, social cards, README captures
 ```
 
 ## Deployment
